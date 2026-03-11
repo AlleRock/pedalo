@@ -366,6 +366,17 @@
   .history-brand { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
   .history-km { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
 
+  .history-actions {
+    display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-left: 4px;
+  }
+  .history-btn {
+    background: none; border: none; color: var(--text-muted);
+    font-size: 13px; cursor: pointer; padding: 4px 6px;
+    border-radius: 6px; transition: all 0.15s; line-height: 1;
+  }
+  .history-btn:hover { background: var(--surface2); color: var(--text); }
+  .history-btn.del:hover { color: var(--danger); }
+
   .empty-history {
     text-align: center; padding: 32px 16px;
     color: var(--text-muted); font-size: 14px; font-style: italic;
@@ -614,6 +625,34 @@
     <div class="modal-actions">
       <button class="btn-cancel" id="cancelImport">Annulla</button>
       <button class="btn-confirm" id="confirmImport" style="background: var(--accent2)">Importa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Modifica sostituzione -->
+<div class="modal-overlay" id="editHistoryModal">
+  <div class="modal">
+    <div class="modal-title">Modifica sostituzione</div>
+    <div class="modal-sub">Correggi i dati di questa sostituzione</div>
+    <div class="modal-form-group">
+      <label>Data sostituzione</label>
+      <input type="date" id="editHistoryDate" />
+    </div>
+    <div class="modal-form-group">
+      <label>Marchio</label>
+      <input type="text" id="editHistoryBrand" placeholder="es. Shimano" />
+    </div>
+    <div class="modal-form-group">
+      <label>Modello</label>
+      <input type="text" id="editHistoryModel" placeholder="es. Deore XT" />
+    </div>
+    <div class="modal-form-group">
+      <label>Note</label>
+      <input type="text" id="editHistoryNote" placeholder="es. Usura, rottura, upgrade..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelEditHistory">Annulla</button>
+      <button class="btn-confirm" id="confirmEditHistory">Salva</button>
     </div>
   </div>
 </div>
@@ -1395,8 +1434,67 @@ function renderHistory(history) {
         ${h.prevBrand||h.prevModel ? `<div class="history-brand">Precedente: ${[h.prevBrand,h.prevModel].filter(Boolean).join(' ')}</div>` : ''}
         ${h.kmAtSwap != null ? `<div class="history-km">🚴 ${h.kmAtSwap.toLocaleString('it-IT')} km alla sostituzione</div>` : ''}
       </div>
+      <div class="history-actions">
+        <button class="history-btn" onclick="openEditHistory(${h.ts})" title="Modifica">✏️</button>
+        <button class="history-btn del" onclick="deleteHistory(${h.ts})" title="Elimina">🗑</button>
+      </div>
     </div>`).join('');
 }
+
+// ============================================================
+// EDIT / DELETE HISTORY
+// ============================================================
+let editingHistoryTs = null;
+
+function openEditHistory(ts) {
+  const part = appData.parts.find(p => p.id === currentPartId);
+  if (!part) return;
+  const h = part.history.find(h => h.ts === ts);
+  if (!h) return;
+  editingHistoryTs = ts;
+  document.getElementById('editHistoryDate').value = h.date || '';
+  document.getElementById('editHistoryBrand').value = h.newBrand || '';
+  document.getElementById('editHistoryModel').value = h.newModel || '';
+  document.getElementById('editHistoryNote').value = h.note || '';
+  openModal('editHistoryModal');
+}
+
+function deleteHistory(ts) {
+  const part = appData.parts.find(p => p.id === currentPartId);
+  if (!part) return;
+  part.history = part.history.filter(h => h.ts !== ts);
+  saveData(appData);
+  renderHistory(part.history);
+  showToast('Sostituzione eliminata');
+}
+
+document.getElementById('cancelEditHistory').addEventListener('click', () => {
+  editingHistoryTs = null;
+  closeModal('editHistoryModal');
+});
+
+document.getElementById('confirmEditHistory').addEventListener('click', () => {
+  const part = appData.parts.find(p => p.id === currentPartId);
+  if (!part || !editingHistoryTs) return;
+  const h = part.history.find(h => h.ts === editingHistoryTs);
+  if (!h) return;
+
+  h.date = document.getElementById('editHistoryDate').value;
+  h.newBrand = document.getElementById('editHistoryBrand').value.trim();
+  h.newModel = document.getElementById('editHistoryModel').value.trim();
+  h.note = document.getElementById('editHistoryNote').value.trim();
+
+  // Ricalcola kmAtSwap se cambia la data e c'è la timeline
+  if (appData.stravaTimeline && h.date) {
+    h.kmAtSwap = kmAtDate(appData.stravaTimeline, h.date);
+  }
+
+  editingHistoryTs = null;
+  saveData(appData);
+  renderHistory(part.history);
+  closeModal('editHistoryModal');
+  showToast('Sostituzione aggiornata ✓', 'success');
+});
 
 // ============================================================
 // SAVE
