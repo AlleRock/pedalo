@@ -432,6 +432,23 @@
   }
   .emoji-option.selected { border-color: var(--accent); background: rgba(232,255,71,0.1); }
 
+  /* BIKE PICKER */
+  .bike-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+  .bike-option {
+    background: var(--surface2); border: 2px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .bike-option:hover { border-color: #3a3a3a; }
+  .bike-option.selected { border-color: var(--strava); background: rgba(252,76,2,0.08); }
+  .bike-option-icon { font-size: 24px; flex-shrink: 0; }
+  .bike-option-info { flex: 1; }
+  .bike-option-name { font-size: 15px; font-weight: 500; }
+  .bike-option-km { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .bike-option-check { font-size: 18px; color: var(--strava); opacity: 0; transition: opacity 0.15s; }
+  .bike-option.selected .bike-option-check { opacity: 1; }
+
   /* BACKUP */
   .backup-section {
     margin-top: 40px; border-top: 1px solid var(--border); padding-top: 28px;
@@ -601,6 +618,19 @@
   </div>
 </div>
 
+<!-- MODAL: Selezione bici -->
+<div class="modal-overlay" id="bikeSelectModal">
+  <div class="modal">
+    <div class="modal-title" style="color: var(--strava)">Seleziona la tua bici</div>
+    <div class="modal-sub">Scegli la bici da tracciare in Pèdalo. I km verranno calcolati solo per questa bici.</div>
+    <div class="bike-list" id="bikeList"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelBikeSelect">Annulla</button>
+      <button class="btn-confirm" id="confirmBikeSelect" style="background: var(--strava)">Conferma</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Disconnetti Strava -->
 <div class="modal-overlay" id="stravaDisconnectModal">
   <div class="modal">
@@ -631,7 +661,7 @@
     <div class="km-summary" id="kmSummary">
       <div class="km-total">
         <div class="km-total-number" id="kmTotalNumber">—</div>
-        <div class="km-total-label">km totali bici</div>
+        <div class="km-total-label" id="kmTotalLabel">km totali bici</div>
       </div>
       <button class="km-sync-btn" id="kmSyncBtn">
         <span id="kmSyncIcon">↻</span> Aggiorna
@@ -816,6 +846,8 @@ let selectedEmoji = '🔧';
 let pendingDeleteId = null;
 let editingPartId = null;
 let pendingImportData = null;
+let selectedBikeId = null;   // gear_id Strava della bici selezionata
+let pendingBikeId = null;    // selezione temporanea nel modal
 
 // ============================================================
 // STRAVA AUTH
@@ -975,7 +1007,71 @@ function showStravaSecretPrompt(code) {
 // STRAVA KM SYNC
 // ============================================================
 
-// Scarica TUTTE le attività bici e costruisce una timeline cumulativa
+// Recupera le bici dell'atleta da Strava
+async function fetchAthleteBikes() {
+  const resp = await fetch('https://www.strava.com/api/v3/athlete',
+    { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
+  );
+  if (!resp.ok) return [];
+  const athlete = await resp.json();
+  return athlete.bikes || [];
+}
+
+// Mostra modal selezione bici
+async function showBikeSelectModal(onConfirm) {
+  showToast('Recupero bici da Strava...', '');
+  const bikes = await fetchAthleteBikes();
+
+  if (!bikes.length) {
+    showToast('Nessuna bici trovata su Strava', 'error');
+    return;
+  }
+
+  if (bikes.length === 1) {
+    // Una sola bici — seleziona automaticamente
+    selectedBikeId = bikes[0].id;
+    appData.stravaBikeId = selectedBikeId;
+    appData.stravaBikeName = bikes[0].name;
+    saveData(appData);
+    if (onConfirm) onConfirm();
+    return;
+  }
+
+  const list = document.getElementById('bikeList');
+  pendingBikeId = selectedBikeId || bikes[0].id;
+
+  list.innerHTML = bikes.map(b => `
+    <div class="bike-option ${b.id === pendingBikeId ? 'selected' : ''}"
+         onclick="selectBikeOption('${b.id}', '${b.name.replace(/'/g,"\\'")}', this)">
+      <div class="bike-option-icon">🚴</div>
+      <div class="bike-option-info">
+        <div class="bike-option-name">${b.name}</div>
+        <div class="bike-option-km">${Math.round((b.distance||0)/1000).toLocaleString('it-IT')} km totali su Strava</div>
+      </div>
+      <div class="bike-option-check">✓</div>
+    </div>`).join('');
+
+  document.getElementById('confirmBikeSelect').onclick = () => {
+    if (!pendingBikeId) return;
+    const bike = bikes.find(b => b.id === pendingBikeId);
+    selectedBikeId = pendingBikeId;
+    appData.stravaBikeId = selectedBikeId;
+    appData.stravaBikeName = bike?.name || '';
+    saveData(appData);
+    closeModal('bikeSelectModal');
+    if (onConfirm) onConfirm();
+  };
+
+  openModal('bikeSelectModal');
+}
+
+function selectBikeOption(id, name, el) {
+  pendingBikeId = id;
+  document.querySelectorAll('.bike-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// Scarica attività bici filtrate per gear_id e costruisce timeline cumulativa
 async function fetchAllBikeActivities() {
   const BIKE_TYPES = ['Ride','VirtualRide','EBikeRide','GravelRide','MountainBikeRide'];
   const since = Math.floor(new Date('2010-01-01').getTime() / 1000);
@@ -1003,7 +1099,10 @@ async function fetchAllBikeActivities() {
     if (!activities.length) { keepGoing = false; break; }
 
     activities.forEach(a => {
-      if (BIKE_TYPES.includes(a.type)) {
+      // Filtra per tipo bici E per gear_id se selezionato
+      const rightType = BIKE_TYPES.includes(a.type);
+      const rightBike = !selectedBikeId || a.gear_id === selectedBikeId;
+      if (rightType && rightBike) {
         allActivities.push({
           ts: Math.floor(new Date(a.start_date).getTime() / 1000),
           meters: a.distance
@@ -1041,6 +1140,12 @@ function kmAtDate(timeline, dateISO) {
 async function syncStravaKm() {
   if (!stravaToken) return;
 
+  // Se non è ancora stata scelta la bici, mostra il modal prima di procedere
+  if (!selectedBikeId) {
+    await showBikeSelectModal(() => syncStravaKm());
+    return;
+  }
+
   const btn = document.getElementById('kmSyncBtn');
   const icon = document.getElementById('kmSyncIcon');
   btn.classList.add('syncing');
@@ -1074,6 +1179,9 @@ async function syncStravaKm() {
     renderList();
     if (currentPartId) updateKmDetailCard();
     showToast(`Sync completato: ${totalKm.toLocaleString('it-IT')} km ✓`, 'success');
+    // Aggiorna label con nome bici
+    const lbl = document.getElementById('kmTotalLabel');
+    if (lbl && appData.stravaBikeName) lbl.textContent = appData.stravaBikeName;
 
   } catch(e) {
     showToast('Errore sync Strava ✗', 'error');
@@ -1102,9 +1210,11 @@ function kmColor(km, threshold) {
 function updateKmSummary() {
   const summary = document.getElementById('kmSummary');
   const num = document.getElementById('kmTotalNumber');
+  const lbl = document.getElementById('kmTotalLabel');
   if (stravaToken || appData.stravaTotalKm) {
     summary.classList.add('show');
     num.textContent = (appData.stravaTotalKm || 0).toLocaleString('it-IT');
+    if (lbl && appData.stravaBikeName) lbl.textContent = appData.stravaBikeName;
   } else {
     summary.classList.remove('show');
   }
@@ -1165,13 +1275,18 @@ document.getElementById('btnStrava').addEventListener('click', () => {
 
 document.getElementById('stravaBannerBtn').addEventListener('click', stravaLogin);
 
+document.getElementById('cancelBikeSelect').addEventListener('click', () => closeModal('bikeSelectModal'));
 document.getElementById('cancelStravaDisconnect').addEventListener('click', () => closeModal('stravaDisconnectModal'));
 document.getElementById('confirmStravaDisconnect').addEventListener('click', () => {
   clearStravaToken();
   localStorage.removeItem('pedalo_strava_secret');
   window._STRAVA_SECRET = null;
+  selectedBikeId = null;
   delete appData.stravaTotalKm;
   delete appData.stravaLastSync;
+  delete appData.stravaBikeId;
+  delete appData.stravaBikeName;
+  delete appData.stravaTimeline;
   saveData(appData);
   updateStravaUI();
   renderList();
@@ -1571,6 +1686,9 @@ if (savedToken && savedToken.access_token) {
   stravaAthlete = savedToken.athlete;
   stravaTotalKm = appData.stravaTotalKm || null;
 }
+
+// Carica bici selezionata
+if (appData.stravaBikeId) selectedBikeId = appData.stravaBikeId;
 
 // Gestisci callback OAuth se presente nell'URL
 handleStravaCallback().then(() => {
