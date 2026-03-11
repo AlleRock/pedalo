@@ -974,6 +974,70 @@ function showStravaSecretPrompt(code) {
 // ============================================================
 // STRAVA KM SYNC
 // ============================================================
+
+// Scarica TUTTE le attività bici e costruisce una timeline cumulativa
+async function fetchAllBikeActivities() {
+  const BIKE_TYPES = ['Ride','VirtualRide','EBikeRide','GravelRide','MountainBikeRide'];
+  const since = Math.floor(new Date('2010-01-01').getTime() / 1000);
+  let page = 1;
+  let allActivities = [];
+  let keepGoing = true;
+
+  while (keepGoing) {
+    const resp = await fetch(
+      `https://www.strava.com/api/v3/athlete/activities?per_page=200&page=${page}&after=${since}`,
+      { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
+    );
+
+    if (!resp.ok) {
+      if (resp.status === 401) {
+        clearStravaToken();
+        updateStravaUI();
+        showToast('Sessione Strava scaduta, riconnetti', 'error');
+        return null;
+      }
+      break;
+    }
+
+    const activities = await resp.json();
+    if (!activities.length) { keepGoing = false; break; }
+
+    activities.forEach(a => {
+      if (BIKE_TYPES.includes(a.type)) {
+        allActivities.push({
+          ts: Math.floor(new Date(a.start_date).getTime() / 1000),
+          meters: a.distance
+        });
+      }
+    });
+
+    if (activities.length < 200) keepGoing = false;
+    page++;
+  }
+
+  allActivities.sort((a, b) => a.ts - b.ts);
+
+  let cum = 0;
+  const timeline = allActivities.map(a => {
+    cum += a.meters / 1000;
+    return { ts: a.ts, cumKm: Math.round(cum) };
+  });
+
+  return timeline;
+}
+
+// Km cumulativi fino a una data ISO
+function kmAtDate(timeline, dateISO) {
+  if (!timeline || !timeline.length) return 0;
+  const ts = Math.floor(new Date(dateISO).getTime() / 1000);
+  let km = 0;
+  for (let i = 0; i < timeline.length; i++) {
+    if (timeline[i].ts <= ts) km = timeline[i].cumKm;
+    else break;
+  }
+  return km;
+}
+
 async function syncStravaKm() {
   if (!stravaToken) return;
 
@@ -983,51 +1047,33 @@ async function syncStravaKm() {
   icon.innerHTML = '<span class="spin">↻</span>';
 
   try {
-    // Recupera le attività in bici degli ultimi 5 anni
-    const since = Math.floor(new Date(new Date().getFullYear() - 5, 0, 1).getTime() / 1000);
-    let page = 1;
-    let totalMeters = 0;
-    let keepGoing = true;
+    const timeline = await fetchAllBikeActivities();
+    if (!timeline) { btn.classList.remove('syncing'); icon.innerHTML = '↻'; return; }
 
-    while (keepGoing) {
-      const resp = await fetch(
-        `https://www.strava.com/api/v3/athlete/activities?per_page=200&page=${page}&after=${since}`,
-        { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
-      );
+    const totalKm = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
+    stravaTotalKm = totalKm;
+    appData.stravaTotalKm = totalKm;
+    appData.stravaTimeline = timeline;
+    appData.stravaLastSync = new Date().toISOString();
 
-      if (!resp.ok) {
-        if (resp.status === 401) {
-          // Token scaduto
-          clearStravaToken();
-          updateStravaUI();
-          showToast('Sessione Strava scaduta, riconnetti', 'error');
-          return;
-        }
-        break;
+    // Ricalcola kmAtInstall per tutti i componenti con installDate
+    appData.parts.forEach(part => {
+      if (part.installDate) {
+        part.kmAtInstall = kmAtDate(timeline, part.installDate);
       }
-
-      const activities = await resp.json();
-      if (!activities.length) { keepGoing = false; break; }
-
-      activities.forEach(a => {
-        if (['Ride', 'VirtualRide', 'EBikeRide', 'GravelRide', 'MountainBikeRide'].includes(a.type)) {
-          totalMeters += a.distance;
+      // Ricalcola anche i km nello storico
+      part.history.forEach(h => {
+        if (h.date && h.kmAtSwap == null) {
+          h.kmAtSwap = kmAtDate(timeline, h.date);
         }
       });
+    });
 
-      if (activities.length < 200) keepGoing = false;
-      page++;
-    }
-
-    stravaTotalKm = Math.round(totalMeters / 1000);
-    appData.stravaTotalKm = stravaTotalKm;
-    appData.stravaLastSync = new Date().toISOString();
     saveData(appData);
-
     updateKmSummary();
     renderList();
     if (currentPartId) updateKmDetailCard();
-    showToast(`Sync completato: ${stravaTotalKm.toLocaleString('it-IT')} km ✓`, 'success');
+    showToast(`Sync completato: ${totalKm.toLocaleString('it-IT')} km ✓`, 'success');
 
   } catch(e) {
     showToast('Errore sync Strava ✗', 'error');
@@ -1039,8 +1085,9 @@ async function syncStravaKm() {
 
 function kmSinceInstall(part) {
   if (!appData.stravaTotalKm || !part.installDate) return null;
-  // km totali al momento dell'installazione (salvati nello storico)
-  const kmAtInstall = part.kmAtInstall || 0;
+  const kmAtInstall = part.kmAtInstall != null
+    ? part.kmAtInstall
+    : (appData.stravaTimeline ? kmAtDate(appData.stravaTimeline, part.installDate) : 0);
   return Math.max(0, appData.stravaTotalKm - kmAtInstall);
 }
 
@@ -1245,9 +1292,14 @@ document.getElementById('btnSave').addEventListener('click', () => {
   part.brand = document.getElementById('fieldBrand').value.trim();
   part.model = document.getElementById('fieldModel').value.trim();
   const newInstallDate = document.getElementById('fieldInstallDate').value;
-  // Se cambiano la data di installazione e c'è Strava, aggiorna kmAtInstall
-  if (newInstallDate !== part.installDate && appData.stravaTotalKm) {
-    part.kmAtInstall = appData.stravaTotalKm;
+  // Se cambia la data di installazione, ricalcola kmAtInstall dalla timeline Strava
+  if (newInstallDate !== part.installDate) {
+    if (appData.stravaTimeline && newInstallDate) {
+      part.kmAtInstall = kmAtDate(appData.stravaTimeline, newInstallDate);
+    } else if (appData.stravaTotalKm && newInstallDate) {
+      // Nessuna timeline disponibile, usa il totale attuale (meno preciso)
+      part.kmAtInstall = appData.stravaTotalKm;
+    }
   }
   part.installDate = newInstallDate;
   saveData(appData);
@@ -1290,8 +1342,12 @@ document.getElementById('confirmReplace').addEventListener('click', () => {
   if (newBrand) part.brand = newBrand;
   if (newModel) part.model = newModel;
   part.installDate = date;
-  // Resetta il contatore km per questo componente
-  part.kmAtInstall = appData.stravaTotalKm || 0;
+  // Ricalcola kmAtInstall dalla timeline per la data di sostituzione
+  if (appData.stravaTimeline) {
+    part.kmAtInstall = kmAtDate(appData.stravaTimeline, date);
+  } else {
+    part.kmAtInstall = appData.stravaTotalKm || 0;
+  }
 
   document.getElementById('fieldBrand').value = part.brand;
   document.getElementById('fieldModel').value = part.model;
