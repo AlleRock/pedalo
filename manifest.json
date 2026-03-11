@@ -1,0 +1,18 @@
+{
+  "name": "Pèdalo",
+  "short_name": "Pèdalo",
+  "description": "Gestione ricambi e manutenzione bici",
+  "start_url": "./pedalo.html",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='112' fill='%230e0e0e'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='320'>🚴</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
