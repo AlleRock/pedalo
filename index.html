@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pèdalo">
 <meta name="theme-color" content="#0e0e0e">
+<link rel="manifest" href="./manifest.json">
 <title>Pèdalo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -19,10 +20,12 @@
     --border: #2a2a2a;
     --accent: #e8ff47;
     --accent2: #ff6b35;
+    --strava: #fc4c02;
     --text: #f0f0f0;
     --text-muted: #666;
     --danger: #ff4444;
     --success: #4caf50;
+    --warn: #f59e0b;
     --radius: 12px;
   }
 
@@ -40,31 +43,45 @@
     position: sticky; top: 0; z-index: 100;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: 0 20px; height: 64px;
+    padding: 0 16px; height: 64px;
     display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
   }
 
   .logo {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 32px; letter-spacing: 2px;
-    color: var(--accent); line-height: 1;
+    color: var(--accent); line-height: 1; flex-shrink: 0;
   }
-
   .logo span {
-    color: var(--text-muted); font-size: 13px;
+    color: var(--text-muted); font-size: 11px;
     font-family: 'DM Sans', sans-serif;
     letter-spacing: 0.5px; font-weight: 300;
     display: block; line-height: 1; margin-top: -2px;
   }
 
+  .header-right { display: flex; align-items: center; gap: 8px; }
+
+  .btn-strava {
+    background: var(--strava); color: white;
+    border: none; padding: 8px 14px;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500; font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-strava:active { transform: scale(0.96); }
+  .btn-strava.connected { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; }
+
   .btn-add-main {
     background: var(--accent); color: #0e0e0e;
-    border: none; padding: 10px 18px;
+    border: none; padding: 9px 14px;
     border-radius: var(--radius);
     font-family: 'DM Sans', sans-serif;
     font-weight: 500; font-size: 14px; cursor: pointer;
     display: flex; align-items: center; gap: 6px;
-    transition: all 0.15s;
+    transition: all 0.15s; flex-shrink: 0;
   }
   .btn-add-main:active { transform: scale(0.96); }
 
@@ -76,6 +93,60 @@
     color: var(--text-muted); margin-bottom: 12px; padding-left: 4px;
   }
 
+  /* STRAVA BANNER */
+  .strava-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--strava);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .strava-banner.hidden { display: none; }
+  .strava-banner-icon { font-size: 24px; flex-shrink: 0; }
+  .strava-banner-text { flex: 1; }
+  .strava-banner-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .strava-banner-sub { font-size: 12px; color: var(--text-muted); }
+  .strava-banner-action {
+    background: var(--strava); color: white; border: none;
+    border-radius: 8px; padding: 8px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* KM SUMMARY */
+  .km-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: none;
+    align-items: center; gap: 12px;
+  }
+  .km-summary.show { display: flex; }
+  .km-total { flex: 1; }
+  .km-total-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; letter-spacing: 1px;
+    color: var(--accent); line-height: 1;
+  }
+  .km-total-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .km-sync-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    color: var(--text-muted); font-family: 'DM Sans', sans-serif;
+    font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .km-sync-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .km-sync-btn.syncing { opacity: 0.6; pointer-events: none; }
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* PARTS LIST */
   .parts-list { display: flex; flex-direction: column; gap: 8px; }
 
   .part-card {
@@ -89,7 +160,7 @@
   .part-card.has-data { border-left: 3px solid var(--accent); }
 
   .part-card-main {
-    flex: 1; padding: 14px 16px;
+    flex: 1; padding: 12px 14px;
     display: flex; align-items: center; gap: 12px; min-width: 0;
   }
 
@@ -111,6 +182,21 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
+  /* KM BADGE su card */
+  .part-km {
+    display: flex; flex-direction: column; align-items: flex-end;
+    flex-shrink: 0; padding-right: 4px; gap: 2px;
+  }
+  .part-km-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 17px; letter-spacing: 0.5px; line-height: 1;
+  }
+  .part-km-value.ok { color: var(--success); }
+  .part-km-value.warn { color: var(--warn); }
+  .part-km-value.danger { color: var(--danger); }
+  .part-km-value.none { color: var(--text-muted); font-size: 13px; font-family: 'DM Sans', sans-serif; }
+  .part-km-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
   .part-actions {
     display: flex; align-items: center;
     flex-shrink: 0; border-left: 1px solid var(--border);
@@ -128,6 +214,7 @@
   .part-btn + .part-btn { border-left: 1px solid var(--border); }
   .part-btn:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
 
+  /* DETAIL VIEW */
   .view { display: none; animation: slideIn 0.2s ease; }
   .view.active { display: block; }
 
@@ -146,7 +233,7 @@
 
   .detail-header {
     display: flex; align-items: flex-start;
-    justify-content: space-between; margin-bottom: 28px; gap: 16px;
+    justify-content: space-between; margin-bottom: 20px; gap: 16px;
   }
 
   .detail-icon-wrap {
@@ -162,19 +249,59 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 28px; letter-spacing: 1px; line-height: 1;
   }
-
   .detail-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
+  /* KM DETAIL CARD */
+  .km-detail-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .km-detail-card.show { display: block; }
+  .km-detail-title {
+    font-size: 11px; font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;
+  }
+  .km-detail-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .km-stat { text-align: center; }
+  .km-stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; letter-spacing: 0.5px; line-height: 1;
+  }
+  .km-stat-value.accent { color: var(--accent); }
+  .km-stat-value.ok { color: var(--success); }
+  .km-stat-value.warn { color: var(--warn); }
+  .km-stat-value.danger { color: var(--danger); }
+  .km-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+
+  .km-threshold-row {
+    display: flex; align-items: center; gap: 10px; margin-top: 14px;
+    padding-top: 14px; border-top: 1px solid var(--border);
+  }
+  .km-threshold-row label { font-size: 11px; white-space: nowrap; }
+  .km-threshold-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    padding: 8px 12px; outline: none; transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .km-threshold-input:focus { border-color: var(--accent); }
+  .km-threshold-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+  /* FORM */
   .form-section {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
   }
-
   .form-section-title {
     font-size: 11px; font-weight: 500; letter-spacing: 2px;
     text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
   }
-
   .form-row {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 12px; margin-bottom: 12px;
@@ -188,7 +315,7 @@
     text-transform: uppercase; color: var(--text-muted);
   }
 
-  input[type="text"], input[type="date"] {
+  input[type="text"], input[type="date"], input[type="number"] {
     background: var(--surface2); border: 1px solid var(--border);
     border-radius: 8px; color: var(--text);
     font-family: 'DM Sans', sans-serif; font-size: 15px;
@@ -217,6 +344,7 @@
   }
   .btn-save:hover { border-color: var(--accent); color: var(--accent); }
 
+  /* HISTORY */
   .history-list { display: flex; flex-direction: column; gap: 10px; }
 
   .history-item {
@@ -225,21 +353,18 @@
     display: flex; align-items: flex-start; gap: 12px;
     animation: slideIn 0.2s ease;
   }
-
   .history-dot {
     width: 10px; height: 10px; border-radius: 50%;
     background: var(--accent); margin-top: 5px; flex-shrink: 0;
   }
-
   .history-content { flex: 1; }
-
   .history-date {
     font-size: 11px; letter-spacing: 1px; color: var(--accent);
     text-transform: uppercase; font-weight: 500; margin-bottom: 4px;
   }
-
   .history-desc { font-size: 14px; color: var(--text); }
   .history-brand { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .history-km { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
 
   .empty-history {
     text-align: center; padding: 32px 16px;
@@ -254,7 +379,6 @@
     padding: 20px; backdrop-filter: blur(4px);
   }
   .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
-
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   .modal {
@@ -262,7 +386,6 @@
     border-radius: 16px; padding: 24px; width: 100%; max-width: 480px;
     animation: slideUp 0.2s ease;
   }
-
   @keyframes slideUp {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
@@ -281,7 +404,6 @@
     color: var(--text-muted); border-radius: 10px; padding: 13px;
     font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.15s;
   }
-
   .btn-confirm {
     flex: 2; background: var(--accent); border: none; color: #0e0e0e;
     border-radius: 10px; padding: 13px;
@@ -291,7 +413,6 @@
   .btn-confirm:active, .btn-cancel:active { transform: scale(0.97); }
 
   .confirm-modal-title { color: var(--danger); }
-
   .btn-confirm-delete {
     flex: 2; background: var(--danger); border: none; color: white;
     border-radius: 10px; padding: 13px;
@@ -303,7 +424,6 @@
     display: grid; grid-template-columns: repeat(6, 1fr);
     gap: 8px; margin-bottom: 14px;
   }
-
   .emoji-option {
     width: 100%; aspect-ratio: 1; background: var(--surface2);
     border: 2px solid var(--border); border-radius: 10px; font-size: 22px;
@@ -312,13 +432,10 @@
   }
   .emoji-option.selected { border-color: var(--accent); background: rgba(232,255,71,0.1); }
 
-  /* BACKUP SECTION */
+  /* BACKUP */
   .backup-section {
-    margin-top: 40px;
-    border-top: 1px solid var(--border);
-    padding-top: 28px;
+    margin-top: 40px; border-top: 1px solid var(--border); padding-top: 28px;
   }
-
   .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
   .backup-card {
@@ -332,18 +449,13 @@
   .backup-card.import-card:hover { border-color: var(--accent2); background: var(--surface2); }
 
   .backup-icon { font-size: 26px; line-height: 1; }
-
-  .backup-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px; letter-spacing: 1px;
-  }
+  .backup-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; }
   .export-card .backup-title { color: var(--accent); }
   .import-card .backup-title { color: var(--accent2); }
-
   .backup-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
   .backup-meta { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
 
-  /* OFFLINE BADGE */
+  /* OFFLINE */
   .offline-badge {
     display: none; position: fixed; top: 70px; left: 50%;
     transform: translateX(-50%);
@@ -385,10 +497,16 @@
     Pèdalo
     <span>gestione ricambi bici</span>
   </div>
-  <button class="btn-add-main" id="btnAddPart">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    Aggiungi
-  </button>
+  <div class="header-right">
+    <button class="btn-strava" id="btnStrava">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+      Connetti Strava
+    </button>
+    <button class="btn-add-main" id="btnAddPart">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Aggiungi
+    </button>
+  </div>
 </header>
 
 <div class="offline-badge" id="offlineBadge">
@@ -471,7 +589,7 @@
   </div>
 </div>
 
-<!-- MODAL: Conferma importazione -->
+<!-- MODAL: Importa -->
 <div class="modal-overlay" id="importModal">
   <div class="modal">
     <div class="modal-title" style="color: var(--accent2)">Importa backup</div>
@@ -483,12 +601,47 @@
   </div>
 </div>
 
+<!-- MODAL: Disconnetti Strava -->
+<div class="modal-overlay" id="stravaDisconnectModal">
+  <div class="modal">
+    <div class="modal-title" style="color: var(--strava)">Disconnetti Strava</div>
+    <div class="modal-sub">I km sincronizzati rimarranno salvati, ma non verranno più aggiornati automaticamente.</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelStravaDisconnect">Annulla</button>
+      <button class="btn-confirm" id="confirmStravaDisconnect" style="background: var(--strava)">Disconnetti</button>
+    </div>
+  </div>
+</div>
+
 <main>
   <!-- VIEW: Lista -->
   <div class="view active" id="viewList">
+
+    <!-- Banner connetti Strava -->
+    <div class="strava-banner" id="stravaBanner">
+      <div class="strava-banner-icon">🚴</div>
+      <div class="strava-banner-text">
+        <div class="strava-banner-title">Connetti Strava</div>
+        <div class="strava-banner-sub">Sincronizza i km automaticamente dopo ogni uscita</div>
+      </div>
+      <button class="strava-banner-action" id="stravaBannerBtn">Connetti</button>
+    </div>
+
+    <!-- KM Summary (quando connesso) -->
+    <div class="km-summary" id="kmSummary">
+      <div class="km-total">
+        <div class="km-total-number" id="kmTotalNumber">—</div>
+        <div class="km-total-label">km totali bici</div>
+      </div>
+      <button class="km-sync-btn" id="kmSyncBtn">
+        <span id="kmSyncIcon">↻</span> Aggiorna
+      </button>
+    </div>
+
     <div class="section-label">Componenti</div>
     <div class="parts-list" id="partsList"></div>
 
+    <!-- Backup -->
     <div class="backup-section">
       <div class="section-label">Dati &amp; Backup</div>
       <div class="backup-grid">
@@ -521,6 +674,30 @@
       <div class="detail-title-wrap">
         <div class="detail-title" id="detailTitle">Componente</div>
         <div class="detail-subtitle" id="detailSubtitle">Nessun dato inserito</div>
+      </div>
+    </div>
+
+    <!-- KM card (solo se Strava connesso) -->
+    <div class="km-detail-card" id="kmDetailCard">
+      <div class="km-detail-title">Chilometri</div>
+      <div class="km-detail-row">
+        <div class="km-stat">
+          <div class="km-stat-value accent" id="kmStatCurrent">—</div>
+          <div class="km-stat-label">percorsi</div>
+        </div>
+        <div class="km-stat">
+          <div class="km-stat-value" id="kmStatThresholdDisplay">—</div>
+          <div class="km-stat-label">soglia</div>
+        </div>
+        <div class="km-stat">
+          <div class="km-stat-value" id="kmStatRemaining">—</div>
+          <div class="km-stat-label">rimanenti</div>
+        </div>
+      </div>
+      <div class="km-threshold-row">
+        <label>Soglia km</label>
+        <input type="number" class="km-threshold-input" id="kmThresholdInput" placeholder="es. 2000" min="0" />
+        <span class="km-threshold-label">km</span>
       </div>
     </div>
 
@@ -557,7 +734,14 @@
 
 <script>
 // ============================================================
-// SERVICE WORKER — va nella stessa cartella di questo file
+// CONFIG
+// ============================================================
+const STRAVA_CLIENT_ID = '210700';
+const STRAVA_REDIRECT_URI = 'https://allerock.github.io/pedalo/pedalo.html';
+const STRAVA_SCOPE = 'read,activity:read';
+
+// ============================================================
+// SERVICE WORKER
 // ============================================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -566,7 +750,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // ============================================================
-// OFFLINE INDICATOR
+// OFFLINE
 // ============================================================
 function syncOffline() {
   document.getElementById('offlineBadge').classList.toggle('show', !navigator.onLine);
@@ -576,7 +760,7 @@ window.addEventListener('offline', syncOffline);
 syncOffline();
 
 // ============================================================
-// DATA LAYER — localStorage
+// DATA
 // ============================================================
 const DEFAULT_PARTS = [
   { id: 'telaio',            name: 'Telaio',                    icon: '🦾' },
@@ -611,9 +795,7 @@ function loadData() {
 }
 
 function initData() {
-  const data = {
-    parts: DEFAULT_PARTS.map(p => ({ ...p, brand: '', model: '', installDate: '', history: [] }))
-  };
+  const data = { parts: DEFAULT_PARTS.map(p => ({ ...p, brand: '', model: '', installDate: '', kmThreshold: 0, history: [] })) };
   saveData(data);
   return data;
 }
@@ -636,6 +818,333 @@ let editingPartId = null;
 let pendingImportData = null;
 
 // ============================================================
+// STRAVA AUTH
+// ============================================================
+let stravaToken = null;
+let stravaAthlete = null;
+let stravaTotalKm = null; // km totali bici da Strava
+
+function loadStravaToken() {
+  try {
+    const raw = localStorage.getItem('pedalo_strava');
+    if (!raw) return null;
+    const t = JSON.parse(raw);
+    // controlla scadenza
+    if (t.expires_at && Date.now() / 1000 > t.expires_at) return t; // scaduto ma lo teniamo per refresh
+    return t;
+  } catch { return null; }
+}
+
+function saveStravaToken(t) {
+  localStorage.setItem('pedalo_strava', JSON.stringify(t));
+}
+
+function clearStravaToken() {
+  localStorage.removeItem('pedalo_strava');
+  stravaToken = null;
+  stravaAthlete = null;
+  stravaTotalKm = null;
+}
+
+async function stravaRefreshIfNeeded(tokenData) {
+  if (!tokenData) return null;
+  const now = Math.floor(Date.now() / 1000);
+  if (tokenData.expires_at && now < tokenData.expires_at - 300) return tokenData; // ancora valido
+
+  // refresh
+  try {
+    const resp = await fetch('https://www.strava.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: STRAVA_CLIENT_ID,
+        client_secret: '', // non disponibile lato client
+        grant_type: 'refresh_token',
+        refresh_token: tokenData.refresh_token
+      })
+    });
+    // NOTA: il refresh con solo client_id senza client_secret non funziona.
+    // Per app pubbliche statiche Strava non supporta il refresh lato client.
+    // Il token dura 6h — al riavvio dell'app riautentichiamo silenziosamente
+    // se necessario (redirect a Strava, poi ritorno automatico).
+    if (!resp.ok) return null;
+    const newToken = await resp.json();
+    saveStravaToken(newToken);
+    return newToken;
+  } catch { return null; }
+}
+
+function stravaLogin() {
+  // Salviamo la view corrente per tornare qui dopo il redirect
+  localStorage.setItem('pedalo_strava_pending', '1');
+  const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(STRAVA_REDIRECT_URI)}&approval_prompt=auto&scope=${STRAVA_SCOPE}`;
+  window.location.href = url;
+}
+
+async function stravaExchangeCode(code) {
+  // Strava richiede il client_secret per l'exchange — non può stare nel client.
+  // Usiamo il token endpoint con un proxy CORS-friendly.
+  // Per GitHub Pages usiamo il Strava token endpoint direttamente:
+  // NOTA IMPORTANTE: per sicurezza il client_secret NON va mai nel codice pubblico.
+  // La soluzione corretta è un piccolo proxy (Netlify Function, Cloudflare Worker).
+  // Per ora usiamo l'implicit flow alternativo: Strava non supporta implicit per le sue API,
+  // quindi usiamo il PKCE-less public flow con client_secret vuoto e gestiamo l'errore
+  // mostrando istruzioni all'utente.
+
+  // Tentativo diretto (funziona se l'app Strava è configurata come "mobile" o "other")
+  try {
+    const resp = await fetch('https://www.strava.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: STRAVA_CLIENT_ID,
+        client_secret: window._STRAVA_SECRET || '',
+        grant_type: 'authorization_code',
+        code
+      })
+    });
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch { return null; }
+}
+
+// Gestione callback OAuth (quando Strava redirige qui con ?code=...)
+async function handleStravaCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const error = params.get('error');
+
+  if (error) {
+    showToast('Connessione Strava annullata', 'error');
+    window.history.replaceState({}, '', window.location.pathname);
+    return;
+  }
+
+  if (!code) return;
+
+  // Pulisce l'URL
+  window.history.replaceState({}, '', window.location.pathname);
+  localStorage.removeItem('pedalo_strava_pending');
+
+  showToast('Connessione a Strava in corso...', '');
+
+  const tokenData = await stravaExchangeCode(code);
+  if (tokenData && tokenData.access_token) {
+    saveStravaToken(tokenData);
+    stravaToken = tokenData;
+    stravaAthlete = tokenData.athlete;
+    updateStravaUI();
+    await syncStravaKm();
+    showToast(`Connesso come ${stravaAthlete?.firstname || 'atleta'} ✓`, 'success');
+  } else {
+    // Strava richiede client_secret lato server — mostriamo istruzioni
+    showStravaSecretPrompt(code);
+  }
+}
+
+function showStravaSecretPrompt(code) {
+  // Fallback: chiediamo il client_secret all'utente (una volta sola)
+  // In produzione andrebbe un proxy server. Per uso personale questo è accettabile.
+  const secret = prompt(
+    'Pèdalo è un\'app personale.\n\n' +
+    'Per completare la connessione Strava inserisci il tuo Client Secret\n' +
+    '(lo trovi su strava.com/settings/api).\n\n' +
+    'Viene salvato solo sul tuo dispositivo, mai inviato a terzi.'
+  );
+  if (!secret) {
+    showToast('Connessione annullata', 'error');
+    return;
+  }
+  window._STRAVA_SECRET = secret;
+  localStorage.setItem('pedalo_strava_secret', secret);
+  stravaExchangeCode(code).then(tokenData => {
+    if (tokenData && tokenData.access_token) {
+      saveStravaToken(tokenData);
+      stravaToken = tokenData;
+      stravaAthlete = tokenData.athlete;
+      updateStravaUI();
+      syncStravaKm();
+      showToast(`Connesso come ${stravaAthlete?.firstname || 'atleta'} ✓`, 'success');
+    } else {
+      showToast('Errore connessione Strava ✗', 'error');
+    }
+  });
+}
+
+// ============================================================
+// STRAVA KM SYNC
+// ============================================================
+async function syncStravaKm() {
+  if (!stravaToken) return;
+
+  const btn = document.getElementById('kmSyncBtn');
+  const icon = document.getElementById('kmSyncIcon');
+  btn.classList.add('syncing');
+  icon.innerHTML = '<span class="spin">↻</span>';
+
+  try {
+    // Recupera le attività in bici degli ultimi 5 anni
+    const since = Math.floor(new Date(new Date().getFullYear() - 5, 0, 1).getTime() / 1000);
+    let page = 1;
+    let totalMeters = 0;
+    let keepGoing = true;
+
+    while (keepGoing) {
+      const resp = await fetch(
+        `https://www.strava.com/api/v3/athlete/activities?per_page=200&page=${page}&after=${since}`,
+        { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
+      );
+
+      if (!resp.ok) {
+        if (resp.status === 401) {
+          // Token scaduto
+          clearStravaToken();
+          updateStravaUI();
+          showToast('Sessione Strava scaduta, riconnetti', 'error');
+          return;
+        }
+        break;
+      }
+
+      const activities = await resp.json();
+      if (!activities.length) { keepGoing = false; break; }
+
+      activities.forEach(a => {
+        if (['Ride', 'VirtualRide', 'EBikeRide', 'GravelRide', 'MountainBikeRide'].includes(a.type)) {
+          totalMeters += a.distance;
+        }
+      });
+
+      if (activities.length < 200) keepGoing = false;
+      page++;
+    }
+
+    stravaTotalKm = Math.round(totalMeters / 1000);
+    appData.stravaTotalKm = stravaTotalKm;
+    appData.stravaLastSync = new Date().toISOString();
+    saveData(appData);
+
+    updateKmSummary();
+    renderList();
+    if (currentPartId) updateKmDetailCard();
+    showToast(`Sync completato: ${stravaTotalKm.toLocaleString('it-IT')} km ✓`, 'success');
+
+  } catch(e) {
+    showToast('Errore sync Strava ✗', 'error');
+  }
+
+  btn.classList.remove('syncing');
+  icon.innerHTML = '↻';
+}
+
+function kmSinceInstall(part) {
+  if (!appData.stravaTotalKm || !part.installDate) return null;
+  // km totali al momento dell'installazione (salvati nello storico)
+  const kmAtInstall = part.kmAtInstall || 0;
+  return Math.max(0, appData.stravaTotalKm - kmAtInstall);
+}
+
+function kmColor(km, threshold) {
+  if (!threshold || threshold <= 0) return 'accent';
+  const pct = km / threshold;
+  if (pct >= 1) return 'danger';
+  if (pct >= 0.8) return 'warn';
+  return 'ok';
+}
+
+function updateKmSummary() {
+  const summary = document.getElementById('kmSummary');
+  const num = document.getElementById('kmTotalNumber');
+  if (stravaToken || appData.stravaTotalKm) {
+    summary.classList.add('show');
+    num.textContent = (appData.stravaTotalKm || 0).toLocaleString('it-IT');
+  } else {
+    summary.classList.remove('show');
+  }
+}
+
+function updateKmDetailCard() {
+  const card = document.getElementById('kmDetailCard');
+  const part = appData.parts.find(p => p.id === currentPartId);
+  if (!part || !appData.stravaTotalKm) { card.classList.remove('show'); return; }
+
+  card.classList.add('show');
+
+  const km = kmSinceInstall(part);
+  const threshold = part.kmThreshold || 0;
+  const remaining = threshold > 0 ? Math.max(0, threshold - km) : null;
+  const color = km !== null ? kmColor(km, threshold) : 'accent';
+
+  document.getElementById('kmStatCurrent').textContent = km !== null ? km.toLocaleString('it-IT') : '—';
+  document.getElementById('kmStatCurrent').className = `km-stat-value ${color}`;
+  document.getElementById('kmStatThresholdDisplay').textContent = threshold > 0 ? threshold.toLocaleString('it-IT') : '—';
+  document.getElementById('kmStatRemaining').textContent = remaining !== null ? remaining.toLocaleString('it-IT') : '—';
+  document.getElementById('kmStatRemaining').className = `km-stat-value ${remaining !== null ? color : 'accent'}`;
+  document.getElementById('kmThresholdInput').value = threshold || '';
+}
+
+// ============================================================
+// STRAVA UI
+// ============================================================
+function updateStravaUI() {
+  const btn = document.getElementById('btnStrava');
+  const banner = document.getElementById('stravaBanner');
+
+  if (stravaToken) {
+    btn.textContent = `🟠 ${stravaAthlete?.firstname || 'Strava'}`;
+    btn.classList.add('connected');
+    banner.classList.add('hidden');
+    updateKmSummary();
+  } else if (appData.stravaTotalKm) {
+    // Ha dati precedenti ma token scaduto
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg> Riconnetti`;
+    btn.classList.remove('connected');
+    banner.classList.add('hidden');
+    updateKmSummary();
+  } else {
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg> Connetti Strava`;
+    btn.classList.remove('connected');
+    banner.classList.remove('hidden');
+  }
+}
+
+document.getElementById('btnStrava').addEventListener('click', () => {
+  if (stravaToken) {
+    openModal('stravaDisconnectModal');
+  } else {
+    stravaLogin();
+  }
+});
+
+document.getElementById('stravaBannerBtn').addEventListener('click', stravaLogin);
+
+document.getElementById('cancelStravaDisconnect').addEventListener('click', () => closeModal('stravaDisconnectModal'));
+document.getElementById('confirmStravaDisconnect').addEventListener('click', () => {
+  clearStravaToken();
+  localStorage.removeItem('pedalo_strava_secret');
+  window._STRAVA_SECRET = null;
+  delete appData.stravaTotalKm;
+  delete appData.stravaLastSync;
+  saveData(appData);
+  updateStravaUI();
+  renderList();
+  closeModal('stravaDisconnectModal');
+  showToast('Strava disconnesso');
+});
+
+document.getElementById('kmSyncBtn').addEventListener('click', syncStravaKm);
+
+// Soglia km
+document.getElementById('kmThresholdInput').addEventListener('change', () => {
+  const part = appData.parts.find(p => p.id === currentPartId);
+  if (!part) return;
+  part.kmThreshold = parseInt(document.getElementById('kmThresholdInput').value) || 0;
+  saveData(appData);
+  updateKmDetailCard();
+  renderList();
+});
+
+// ============================================================
 // RENDER LIST
 // ============================================================
 function renderList() {
@@ -644,11 +1153,25 @@ function renderList() {
     list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🚲</div><div class="empty-state-text">Nessun componente. Aggiungine uno!</div></div>`;
     return;
   }
+
   list.innerHTML = appData.parts.map((p, i) => {
     const hasData = p.brand || p.model || p.installDate;
     const meta = hasData
       ? [p.brand, p.model].filter(Boolean).join(' ') + (p.installDate ? ` · dal ${formatDate(p.installDate)}` : '')
       : 'Nessun dato inserito';
+
+    // KM badge
+    let kmBadge = '';
+    if (appData.stravaTotalKm && p.installDate) {
+      const km = kmSinceInstall(p);
+      const color = kmColor(km, p.kmThreshold);
+      kmBadge = `
+        <div class="part-km">
+          <div class="part-km-value ${color}">${km.toLocaleString('it-IT')}</div>
+          <div class="part-km-label">km</div>
+        </div>`;
+    }
+
     return `
       <div class="part-card ${hasData ? 'has-data' : ''}" onclick="openDetail('${p.id}')">
         <div class="part-card-main">
@@ -657,6 +1180,7 @@ function renderList() {
             <div class="part-name">${p.name}</div>
             <div class="part-meta">${meta}</div>
           </div>
+          ${kmBadge}
         </div>
         <div class="part-actions">
           <button class="part-btn move" ${i===0?'disabled':''} onclick="event.stopPropagation();movePart('${p.id}',-1)" title="Su">▲</button>
@@ -681,6 +1205,7 @@ function openDetail(id) {
   document.getElementById('fieldModel').value = part.model || '';
   document.getElementById('fieldInstallDate').value = part.installDate || '';
   updateDetailSubtitle(part);
+  updateKmDetailCard();
   renderHistory(part.history);
   showView('viewDetail');
 }
@@ -706,6 +1231,7 @@ function renderHistory(history) {
         <div class="history-desc">${h.newBrand||h.newModel ? 'Sostituito con: '+[h.newBrand,h.newModel].filter(Boolean).join(' ') : 'Sostituzione registrata'}</div>
         ${h.note ? `<div class="history-brand">📝 ${h.note}</div>` : ''}
         ${h.prevBrand||h.prevModel ? `<div class="history-brand">Precedente: ${[h.prevBrand,h.prevModel].filter(Boolean).join(' ')}</div>` : ''}
+        ${h.kmAtSwap != null ? `<div class="history-km">🚴 ${h.kmAtSwap.toLocaleString('it-IT')} km alla sostituzione</div>` : ''}
       </div>
     </div>`).join('');
 }
@@ -718,9 +1244,15 @@ document.getElementById('btnSave').addEventListener('click', () => {
   if (!part) return;
   part.brand = document.getElementById('fieldBrand').value.trim();
   part.model = document.getElementById('fieldModel').value.trim();
-  part.installDate = document.getElementById('fieldInstallDate').value;
+  const newInstallDate = document.getElementById('fieldInstallDate').value;
+  // Se cambiano la data di installazione e c'è Strava, aggiorna kmAtInstall
+  if (newInstallDate !== part.installDate && appData.stravaTotalKm) {
+    part.kmAtInstall = appData.stravaTotalKm;
+  }
+  part.installDate = newInstallDate;
   saveData(appData);
   updateDetailSubtitle(part);
+  updateKmDetailCard();
   renderList();
   showToast('Modifiche salvate ✓', 'success');
 });
@@ -748,13 +1280,18 @@ document.getElementById('confirmReplace').addEventListener('click', () => {
   const newModel = document.getElementById('replaceNewModel').value.trim();
   const note = document.getElementById('replaceNote').value.trim();
 
-  part.history.push({ date, note, ts: Date.now(),
+  part.history.push({
+    date, note, ts: Date.now(),
     prevBrand: part.brand, prevModel: part.model, prevInstall: part.installDate,
-    newBrand, newModel });
+    newBrand, newModel,
+    kmAtSwap: appData.stravaTotalKm || null  // km totali al momento della sostituzione
+  });
 
   if (newBrand) part.brand = newBrand;
   if (newModel) part.model = newModel;
   part.installDate = date;
+  // Resetta il contatore km per questo componente
+  part.kmAtInstall = appData.stravaTotalKm || 0;
 
   document.getElementById('fieldBrand').value = part.brand;
   document.getElementById('fieldModel').value = part.model;
@@ -763,6 +1300,7 @@ document.getElementById('confirmReplace').addEventListener('click', () => {
   saveData(appData);
   renderHistory(part.history);
   updateDetailSubtitle(part);
+  updateKmDetailCard();
   renderList();
   closeModal('replaceModal');
   showToast('Sostituzione registrata ✓', 'success');
@@ -785,7 +1323,7 @@ document.getElementById('btnAddPart').addEventListener('click', () => {
 document.getElementById('cancelAdd').addEventListener('click', () => closeModal('addModal'));
 
 document.querySelectorAll('.emoji-option').forEach(el => {
-  el.addEventListener('click', () => { setEmoji(el.dataset.emoji); });
+  el.addEventListener('click', () => setEmoji(el.dataset.emoji));
 });
 
 function setEmoji(e) {
@@ -803,7 +1341,7 @@ document.getElementById('confirmAdd').onclick = () => {
     saveData(appData); renderList(); closeModal('addModal');
     showToast('Componente aggiornato ✓', 'success');
   } else {
-    appData.parts.push({ id: 'c_'+Date.now(), name, icon: selectedEmoji, brand: '', model: '', installDate: '', history: [] });
+    appData.parts.push({ id: 'c_'+Date.now(), name, icon: selectedEmoji, brand: '', model: '', installDate: '', kmThreshold: 0, history: [] });
     saveData(appData); renderList(); closeModal('addModal');
     showToast(`"${name}" aggiunto ✓`, 'success');
   }
@@ -854,13 +1392,12 @@ document.getElementById('confirmDelete').addEventListener('click', () => {
   if (!pendingDeleteId) return;
   appData.parts = appData.parts.filter(p => p.id !== pendingDeleteId);
   saveData(appData); renderList();
-  pendingDeleteId = null;
-  closeModal('deleteModal');
+  pendingDeleteId = null; closeModal('deleteModal');
   showToast('Componente eliminato');
 });
 
 // ============================================================
-// EXPORT JSON
+// EXPORT / IMPORT
 // ============================================================
 function updateExportMeta() {
   const el = document.getElementById('exportMeta');
@@ -879,16 +1416,11 @@ document.getElementById('btnExport').addEventListener('click', () => {
   const a = document.createElement('a');
   a.href = url;
   a.download = `pedalo-backup-${todayISO()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
   showToast('Backup esportato ✓', 'success');
 });
 
-// ============================================================
-// IMPORT JSON
-// ============================================================
 document.getElementById('btnImport').addEventListener('click', () => {
   document.getElementById('importFileInput').value = '';
   document.getElementById('importFileInput').click();
@@ -904,15 +1436,11 @@ document.getElementById('importFileInput').addEventListener('change', e => {
       if (!parsed.parts || !Array.isArray(parsed.parts)) throw new Error();
       pendingImportData = parsed;
       const n = parsed.parts.length;
-      const ts = parsed.exportedAt
-        ? new Date(parsed.exportedAt).toLocaleString('it-IT')
-        : 'data sconosciuta';
+      const ts = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString('it-IT') : 'data sconosciuta';
       document.getElementById('importModalSub').textContent =
         `Il backup contiene ${n} componenti (esportato il ${ts}). I dati attuali verranno sostituiti. Continuare?`;
       openModal('importModal');
-    } catch {
-      showToast('File non valido ✗', 'error');
-    }
+    } catch { showToast('File non valido ✗', 'error'); }
   };
   reader.readAsText(file);
 });
@@ -924,6 +1452,7 @@ document.getElementById('confirmImport').addEventListener('click', () => {
   appData = pendingImportData;
   saveData(appData);
   renderList();
+  updateKmSummary();
   pendingImportData = null;
   closeModal('importModal');
   showToast(`Importati ${appData.parts.length} componenti ✓`, 'success');
@@ -940,7 +1469,7 @@ function showView(id) {
 }
 
 // ============================================================
-// MODAL HELPERS
+// MODALS
 // ============================================================
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -975,8 +1504,25 @@ function formatDate(iso) {
 // ============================================================
 // INIT
 // ============================================================
-renderList();
-updateExportMeta();
+// Carica secret Strava se salvato
+const savedSecret = localStorage.getItem('pedalo_strava_secret');
+if (savedSecret) window._STRAVA_SECRET = savedSecret;
+
+// Carica token Strava
+const savedToken = loadStravaToken();
+if (savedToken && savedToken.access_token) {
+  stravaToken = savedToken;
+  stravaAthlete = savedToken.athlete;
+  stravaTotalKm = appData.stravaTotalKm || null;
+}
+
+// Gestisci callback OAuth se presente nell'URL
+handleStravaCallback().then(() => {
+  updateStravaUI();
+  updateKmSummary();
+  renderList();
+  updateExportMeta();
+});
 </script>
 </body>
 </html>
