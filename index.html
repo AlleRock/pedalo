@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pèdalo">
+<meta name="theme-color" content="#0e0e0e">
+<title>Pèdalo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --accent: #e8ff47;
+    --accent2: #ff6b35;
+    --text: #f0f0f0;
+    --text-muted: #666;
+    --danger: #ff4444;
+    --success: #4caf50;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; letter-spacing: 2px;
+    color: var(--accent); line-height: 1;
+  }
+
+  .logo span {
+    color: var(--text-muted); font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.5px; font-weight: 300;
+    display: block; line-height: 1; margin-top: -2px;
+  }
+
+  .btn-add-main {
+    background: var(--accent); color: #0e0e0e;
+    border: none; padding: 10px 18px;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-add-main:active { transform: scale(0.96); }
+
+  main { max-width: 700px; margin: 0 auto; padding: 24px 16px 40px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 12px; padding-left: 4px;
+  }
+
+  .parts-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .part-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex; align-items: center; overflow: hidden;
+    transition: border-color 0.15s, transform 0.1s; cursor: pointer;
+  }
+  .part-card:active { transform: scale(0.99); }
+  .part-card:hover { border-color: #3a3a3a; }
+  .part-card.has-data { border-left: 3px solid var(--accent); }
+
+  .part-card-main {
+    flex: 1; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px; min-width: 0;
+  }
+
+  .part-icon {
+    width: 36px; height: 36px; background: var(--surface2);
+    border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-size: 18px; flex-shrink: 0;
+  }
+
+  .part-info { flex: 1; min-width: 0; }
+
+  .part-name {
+    font-size: 15px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .part-meta {
+    font-size: 12px; color: var(--text-muted); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .part-actions {
+    display: flex; align-items: center;
+    flex-shrink: 0; border-left: 1px solid var(--border);
+  }
+
+  .part-btn {
+    background: none; border: none; color: var(--text-muted);
+    padding: 14px 11px; cursor: pointer; font-size: 14px;
+    transition: color 0.15s, background 0.15s;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .part-btn:hover { color: var(--text); background: var(--surface2); }
+  .part-btn.delete:hover { color: var(--danger); }
+  .part-btn.move:hover { color: var(--accent); }
+  .part-btn + .part-btn { border-left: 1px solid var(--border); }
+  .part-btn:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
+
+  .view { display: none; animation: slideIn 0.2s ease; }
+  .view.active { display: block; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .back-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: none; border: none; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    cursor: pointer; padding: 0; margin-bottom: 24px; transition: color 0.15s;
+  }
+  .back-btn:hover { color: var(--text); }
+
+  .detail-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; margin-bottom: 28px; gap: 16px;
+  }
+
+  .detail-icon-wrap {
+    width: 56px; height: 56px; background: var(--surface2);
+    border-radius: 14px; display: flex; align-items: center;
+    justify-content: center; font-size: 28px; flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+
+  .detail-title-wrap { flex: 1; }
+
+  .detail-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 1px; line-height: 1;
+  }
+
+  .detail-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .form-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+  }
+
+  .form-section-title {
+    font-size: 11px; font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
+  }
+
+  .form-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 12px;
+  }
+  .form-row:last-child { margin-bottom: 0; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 11px; font-weight: 500; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+
+  input[type="text"], input[type="date"] {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    padding: 11px 14px; width: 100%; outline: none;
+    transition: border-color 0.15s; -webkit-appearance: none; color-scheme: dark;
+  }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--text-muted); }
+
+  .btn-replace {
+    background: var(--accent2); color: white; border: none;
+    border-radius: var(--radius); padding: 16px 24px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 16px;
+    cursor: pointer; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all 0.15s; margin-bottom: 16px;
+  }
+  .btn-replace:active { transform: scale(0.98); }
+
+  .btn-save {
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 24px; font-family: 'DM Sans', sans-serif;
+    font-weight: 400; font-size: 15px; cursor: pointer;
+    width: 100%; transition: all 0.15s; margin-bottom: 16px;
+  }
+  .btn-save:hover { border-color: var(--accent); color: var(--accent); }
+
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .history-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+    animation: slideIn 0.2s ease;
+  }
+
+  .history-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent); margin-top: 5px; flex-shrink: 0;
+  }
+
+  .history-content { flex: 1; }
+
+  .history-date {
+    font-size: 11px; letter-spacing: 1px; color: var(--accent);
+    text-transform: uppercase; font-weight: 500; margin-bottom: 4px;
+  }
+
+  .history-desc { font-size: 14px; color: var(--text); }
+  .history-brand { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  .empty-history {
+    text-align: center; padding: 32px 16px;
+    color: var(--text-muted); font-size: 14px; font-style: italic;
+  }
+
+  /* MODALS */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 200; display: none;
+    align-items: flex-end; justify-content: center;
+    padding: 20px; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; width: 100%; max-width: 480px;
+    animation: slideUp 0.2s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .modal-form-group { margin-bottom: 14px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+  .btn-cancel {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-muted); border-radius: 10px; padding: 13px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.15s;
+  }
+
+  .btn-confirm {
+    flex: 2; background: var(--accent); border: none; color: #0e0e0e;
+    border-radius: 10px; padding: 13px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-confirm:active, .btn-cancel:active { transform: scale(0.97); }
+
+  .confirm-modal-title { color: var(--danger); }
+
+  .btn-confirm-delete {
+    flex: 2; background: var(--danger); border: none; color: white;
+    border-radius: 10px; padding: 13px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px;
+    cursor: pointer; transition: all 0.15s;
+  }
+
+  .emoji-picker {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 8px; margin-bottom: 14px;
+  }
+
+  .emoji-option {
+    width: 100%; aspect-ratio: 1; background: var(--surface2);
+    border: 2px solid var(--border); border-radius: 10px; font-size: 22px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.1s;
+  }
+  .emoji-option.selected { border-color: var(--accent); background: rgba(232,255,71,0.1); }
+
+  /* BACKUP SECTION */
+  .backup-section {
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+
+  .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .backup-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  }
+  .backup-card:active { transform: scale(0.98); }
+  .backup-card.export-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .backup-card.import-card:hover { border-color: var(--accent2); background: var(--surface2); }
+
+  .backup-icon { font-size: 26px; line-height: 1; }
+
+  .backup-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px; letter-spacing: 1px;
+  }
+  .export-card .backup-title { color: var(--accent); }
+  .import-card .backup-title { color: var(--accent2); }
+
+  .backup-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .backup-meta { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
+
+  /* OFFLINE BADGE */
+  .offline-badge {
+    display: none; position: fixed; top: 70px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 12px;
+    padding: 6px 14px; border-radius: 20px; z-index: 99;
+    gap: 6px; align-items: center;
+  }
+  .offline-badge.show { display: flex; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 20px;
+    border-radius: 30px; font-size: 14px; z-index: 999;
+    opacity: 0; transition: all 0.25s ease;
+    white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 15px; }
+
+  @media (min-width: 600px) {
+    main { padding: 32px 24px 40px; }
+    .form-row { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    Pèdalo
+    <span>gestione ricambi bici</span>
+  </div>
+  <button class="btn-add-main" id="btnAddPart">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    Aggiungi
+  </button>
+</header>
+
+<div class="offline-badge" id="offlineBadge">
+  <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#666"/></svg>
+  Modalità offline
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL: Aggiungi/Modifica -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-title" id="addModalTitle">Nuovo componente</div>
+    <div class="modal-sub" id="addModalSub">Scegli un'icona e dai un nome al pezzo</div>
+    <div class="modal-form-group">
+      <label>Icona</label>
+      <div class="emoji-picker">
+        <div class="emoji-option selected" data-emoji="🔧">🔧</div>
+        <div class="emoji-option" data-emoji="⚙️">⚙️</div>
+        <div class="emoji-option" data-emoji="🔩">🔩</div>
+        <div class="emoji-option" data-emoji="🚴">🚴</div>
+        <div class="emoji-option" data-emoji="🛞">🛞</div>
+        <div class="emoji-option" data-emoji="⛓️">⛓️</div>
+        <div class="emoji-option" data-emoji="🦾">🦾</div>
+        <div class="emoji-option" data-emoji="📡">📡</div>
+        <div class="emoji-option" data-emoji="💺">💺</div>
+        <div class="emoji-option" data-emoji="🎯">🎯</div>
+        <div class="emoji-option" data-emoji="🔑">🔑</div>
+        <div class="emoji-option" data-emoji="⚡">⚡</div>
+      </div>
+    </div>
+    <div class="modal-form-group">
+      <label>Nome componente</label>
+      <input type="text" id="newPartName" placeholder="es. Forcella, Reggisella..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelAdd">Annulla</button>
+      <button class="btn-confirm" id="confirmAdd">Aggiungi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Sostituisci -->
+<div class="modal-overlay" id="replaceModal">
+  <div class="modal">
+    <div class="modal-title">Sostituisci componente</div>
+    <div class="modal-sub" id="replaceModalSub">Registra la sostituzione</div>
+    <div class="modal-form-group">
+      <label>Data sostituzione</label>
+      <input type="date" id="replaceDate" />
+    </div>
+    <div class="modal-form-group">
+      <label>Nuovo marchio (opzionale)</label>
+      <input type="text" id="replaceNewBrand" placeholder="es. Shimano" />
+    </div>
+    <div class="modal-form-group">
+      <label>Nuovo modello (opzionale)</label>
+      <input type="text" id="replaceNewModel" placeholder="es. Deore XT" />
+    </div>
+    <div class="modal-form-group">
+      <label>Note (opzionale)</label>
+      <input type="text" id="replaceNote" placeholder="es. Usura, rottura, upgrade..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelReplace">Annulla</button>
+      <button class="btn-confirm" id="confirmReplace">✓ Registra</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Elimina -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-title confirm-modal-title">Elimina componente</div>
+    <div class="modal-sub" id="deleteModalSub">Operazione non reversibile.</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelDelete">Annulla</button>
+      <button class="btn-confirm-delete" id="confirmDelete">Elimina</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Conferma importazione -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <div class="modal-title" style="color: var(--accent2)">Importa backup</div>
+    <div class="modal-sub" id="importModalSub">I dati attuali verranno sostituiti.</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelImport">Annulla</button>
+      <button class="btn-confirm" id="confirmImport" style="background: var(--accent2)">Importa</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <!-- VIEW: Lista -->
+  <div class="view active" id="viewList">
+    <div class="section-label">Componenti</div>
+    <div class="parts-list" id="partsList"></div>
+
+    <div class="backup-section">
+      <div class="section-label">Dati &amp; Backup</div>
+      <div class="backup-grid">
+        <div class="backup-card export-card" id="btnExport">
+          <div class="backup-icon">📤</div>
+          <div class="backup-title">Esporta</div>
+          <div class="backup-desc">Salva tutti i dati in un file JSON sul tuo dispositivo</div>
+          <div class="backup-meta" id="exportMeta">—</div>
+        </div>
+        <div class="backup-card import-card" id="btnImport">
+          <div class="backup-icon">📥</div>
+          <div class="backup-title">Importa</div>
+          <div class="backup-desc">Ripristina da un backup JSON precedentemente salvato</div>
+          <div class="backup-meta">Sostituisce i dati correnti</div>
+        </div>
+      </div>
+      <input type="file" id="importFileInput" accept=".json" style="display:none">
+    </div>
+  </div>
+
+  <!-- VIEW: Dettaglio -->
+  <div class="view" id="viewDetail">
+    <button class="back-btn" id="backBtn">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Tutti i componenti
+    </button>
+
+    <div class="detail-header">
+      <div class="detail-icon-wrap" id="detailIcon">🔧</div>
+      <div class="detail-title-wrap">
+        <div class="detail-title" id="detailTitle">Componente</div>
+        <div class="detail-subtitle" id="detailSubtitle">Nessun dato inserito</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Componente attuale</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Marchio</label>
+          <input type="text" id="fieldBrand" placeholder="es. Shimano" />
+        </div>
+        <div class="form-group">
+          <label>Modello</label>
+          <input type="text" id="fieldModel" placeholder="es. Deore XT" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Data installazione</label>
+          <input type="date" id="fieldInstallDate" />
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-save" id="btnSave">Salva modifiche</button>
+    <button class="btn-replace" id="btnReplace">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9a7 7 0 1 0 14 0 7 7 0 0 0-14 0z" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Registra sostituzione
+    </button>
+
+    <div class="section-label" style="margin-top: 8px;">Storico sostituzioni</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</main>
+
+<script>
+// ============================================================
+// SERVICE WORKER — va nella stessa cartella di questo file
+// ============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// ============================================================
+// OFFLINE INDICATOR
+// ============================================================
+function syncOffline() {
+  document.getElementById('offlineBadge').classList.toggle('show', !navigator.onLine);
+}
+window.addEventListener('online', syncOffline);
+window.addEventListener('offline', syncOffline);
+syncOffline();
+
+// ============================================================
+// DATA LAYER — localStorage
+// ============================================================
+const DEFAULT_PARTS = [
+  { id: 'telaio',            name: 'Telaio',                    icon: '🦾' },
+  { id: 'cerchio_ant',       name: 'Cerchione anteriore',       icon: '🛞' },
+  { id: 'ruota_ant',         name: 'Ruota anteriore',           icon: '🛞' },
+  { id: 'camera_ant',        name: "Camera d'aria anteriore",   icon: '🔩' },
+  { id: 'pastiglie_ant',     name: 'Pastiglie freni anteriori', icon: '🔩' },
+  { id: 'cerchio_post',      name: 'Cerchione posteriore',      icon: '🛞' },
+  { id: 'ruota_post',        name: 'Ruota posteriore',          icon: '🛞' },
+  { id: 'camera_post',       name: "Camera d'aria posteriore",  icon: '🔩' },
+  { id: 'pastiglie_post',    name: 'Pastiglie freni posteriori',icon: '🔩' },
+  { id: 'deragliatore_ant',  name: 'Deragliatore anteriore',    icon: '⚙️' },
+  { id: 'guarnitura',        name: 'Guarnitura',                icon: '⚙️' },
+  { id: 'deragliatore_post', name: 'Deragliatore posteriore',   icon: '⚙️' },
+  { id: 'pignoni',           name: 'Pacco pignoni',             icon: '⚙️' },
+  { id: 'pedali',            name: 'Pedali',                    icon: '🔧' },
+  { id: 'sella',             name: 'Sella',                     icon: '💺' },
+  { id: 'catena',            name: 'Catena',                    icon: '⛓️' },
+  { id: 'ciclocomputer',     name: 'Ciclocomputer',             icon: '📡' },
+  { id: 'fascia_cardio',     name: 'Fascia cardio',             icon: '❤️' },
+  { id: 'sensore_cadenza',   name: 'Sensore di cadenza',        icon: '📡' },
+  { id: 'sensore_velocita',  name: 'Sensore di velocità',       icon: '📡' },
+  { id: 'manubrio',          name: 'Manubrio',                  icon: '🚴' },
+];
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem('pedalo_data');
+    if (!raw) return initData();
+    return JSON.parse(raw);
+  } catch(e) { return initData(); }
+}
+
+function initData() {
+  const data = {
+    parts: DEFAULT_PARTS.map(p => ({ ...p, brand: '', model: '', installDate: '', history: [] }))
+  };
+  saveData(data);
+  return data;
+}
+
+function saveData(data) {
+  data.updatedAt = new Date().toISOString();
+  try { localStorage.setItem('pedalo_data', JSON.stringify(data)); } catch(e) {}
+  updateExportMeta();
+}
+
+let appData = loadData();
+
+// ============================================================
+// STATE
+// ============================================================
+let currentPartId = null;
+let selectedEmoji = '🔧';
+let pendingDeleteId = null;
+let editingPartId = null;
+let pendingImportData = null;
+
+// ============================================================
+// RENDER LIST
+// ============================================================
+function renderList() {
+  const list = document.getElementById('partsList');
+  if (!appData.parts.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🚲</div><div class="empty-state-text">Nessun componente. Aggiungine uno!</div></div>`;
+    return;
+  }
+  list.innerHTML = appData.parts.map((p, i) => {
+    const hasData = p.brand || p.model || p.installDate;
+    const meta = hasData
+      ? [p.brand, p.model].filter(Boolean).join(' ') + (p.installDate ? ` · dal ${formatDate(p.installDate)}` : '')
+      : 'Nessun dato inserito';
+    return `
+      <div class="part-card ${hasData ? 'has-data' : ''}" onclick="openDetail('${p.id}')">
+        <div class="part-card-main">
+          <div class="part-icon">${p.icon}</div>
+          <div class="part-info">
+            <div class="part-name">${p.name}</div>
+            <div class="part-meta">${meta}</div>
+          </div>
+        </div>
+        <div class="part-actions">
+          <button class="part-btn move" ${i===0?'disabled':''} onclick="event.stopPropagation();movePart('${p.id}',-1)" title="Su">▲</button>
+          <button class="part-btn move" ${i===appData.parts.length-1?'disabled':''} onclick="event.stopPropagation();movePart('${p.id}',1)" title="Giù">▼</button>
+          <button class="part-btn" onclick="event.stopPropagation();openEditName('${p.id}')" title="Modifica">✏️</button>
+          <button class="part-btn delete" onclick="event.stopPropagation();confirmDelete('${p.id}')" title="Elimina">🗑</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// DETAIL
+// ============================================================
+function openDetail(id) {
+  currentPartId = id;
+  const part = appData.parts.find(p => p.id === id);
+  if (!part) return;
+  document.getElementById('detailIcon').textContent = part.icon;
+  document.getElementById('detailTitle').textContent = part.name;
+  document.getElementById('fieldBrand').value = part.brand || '';
+  document.getElementById('fieldModel').value = part.model || '';
+  document.getElementById('fieldInstallDate').value = part.installDate || '';
+  updateDetailSubtitle(part);
+  renderHistory(part.history);
+  showView('viewDetail');
+}
+
+function updateDetailSubtitle(part) {
+  document.getElementById('detailSubtitle').textContent =
+    (part.brand || part.model)
+      ? [part.brand, part.model].filter(Boolean).join(' ')
+      : 'Nessun dato inserito';
+}
+
+function renderHistory(history) {
+  const list = document.getElementById('historyList');
+  if (!history || !history.length) {
+    list.innerHTML = `<div class="empty-history">Nessuna sostituzione registrata</div>`;
+    return;
+  }
+  list.innerHTML = [...history].reverse().map(h => `
+    <div class="history-item">
+      <div class="history-dot"></div>
+      <div class="history-content">
+        <div class="history-date">${formatDate(h.date)}</div>
+        <div class="history-desc">${h.newBrand||h.newModel ? 'Sostituito con: '+[h.newBrand,h.newModel].filter(Boolean).join(' ') : 'Sostituzione registrata'}</div>
+        ${h.note ? `<div class="history-brand">📝 ${h.note}</div>` : ''}
+        ${h.prevBrand||h.prevModel ? `<div class="history-brand">Precedente: ${[h.prevBrand,h.prevModel].filter(Boolean).join(' ')}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// SAVE
+// ============================================================
+document.getElementById('btnSave').addEventListener('click', () => {
+  const part = appData.parts.find(p => p.id === currentPartId);
+  if (!part) return;
+  part.brand = document.getElementById('fieldBrand').value.trim();
+  part.model = document.getElementById('fieldModel').value.trim();
+  part.installDate = document.getElementById('fieldInstallDate').value;
+  saveData(appData);
+  updateDetailSubtitle(part);
+  renderList();
+  showToast('Modifiche salvate ✓', 'success');
+});
+
+// ============================================================
+// REPLACE
+// ============================================================
+document.getElementById('btnReplace').addEventListener('click', () => {
+  const part = appData.parts.find(p => p.id === currentPartId);
+  document.getElementById('replaceModalSub').textContent = `Sostituzione: ${part.name}`;
+  document.getElementById('replaceDate').value = todayISO();
+  document.getElementById('replaceNewBrand').value = '';
+  document.getElementById('replaceNewModel').value = '';
+  document.getElementById('replaceNote').value = '';
+  openModal('replaceModal');
+});
+
+document.getElementById('cancelReplace').addEventListener('click', () => closeModal('replaceModal'));
+
+document.getElementById('confirmReplace').addEventListener('click', () => {
+  const part = appData.parts.find(p => p.id === currentPartId);
+  if (!part) return;
+  const date = document.getElementById('replaceDate').value || todayISO();
+  const newBrand = document.getElementById('replaceNewBrand').value.trim();
+  const newModel = document.getElementById('replaceNewModel').value.trim();
+  const note = document.getElementById('replaceNote').value.trim();
+
+  part.history.push({ date, note, ts: Date.now(),
+    prevBrand: part.brand, prevModel: part.model, prevInstall: part.installDate,
+    newBrand, newModel });
+
+  if (newBrand) part.brand = newBrand;
+  if (newModel) part.model = newModel;
+  part.installDate = date;
+
+  document.getElementById('fieldBrand').value = part.brand;
+  document.getElementById('fieldModel').value = part.model;
+  document.getElementById('fieldInstallDate').value = part.installDate;
+
+  saveData(appData);
+  renderHistory(part.history);
+  updateDetailSubtitle(part);
+  renderList();
+  closeModal('replaceModal');
+  showToast('Sostituzione registrata ✓', 'success');
+});
+
+// ============================================================
+// ADD / EDIT
+// ============================================================
+document.getElementById('btnAddPart').addEventListener('click', () => {
+  editingPartId = null;
+  document.getElementById('addModalTitle').textContent = 'Nuovo componente';
+  document.getElementById('addModalSub').textContent = "Scegli un'icona e dai un nome al pezzo";
+  document.getElementById('confirmAdd').textContent = 'Aggiungi';
+  document.getElementById('newPartName').value = '';
+  setEmoji('🔧');
+  openModal('addModal');
+  setTimeout(() => document.getElementById('newPartName').focus(), 300);
+});
+
+document.getElementById('cancelAdd').addEventListener('click', () => closeModal('addModal'));
+
+document.querySelectorAll('.emoji-option').forEach(el => {
+  el.addEventListener('click', () => { setEmoji(el.dataset.emoji); });
+});
+
+function setEmoji(e) {
+  selectedEmoji = e;
+  document.querySelectorAll('.emoji-option').forEach(el => el.classList.toggle('selected', el.dataset.emoji === e));
+}
+
+document.getElementById('confirmAdd').onclick = () => {
+  const name = document.getElementById('newPartName').value.trim();
+  if (!name) { document.getElementById('newPartName').focus(); return; }
+  if (editingPartId) {
+    const part = appData.parts.find(p => p.id === editingPartId);
+    if (part) { part.name = name; part.icon = selectedEmoji; }
+    editingPartId = null;
+    saveData(appData); renderList(); closeModal('addModal');
+    showToast('Componente aggiornato ✓', 'success');
+  } else {
+    appData.parts.push({ id: 'c_'+Date.now(), name, icon: selectedEmoji, brand: '', model: '', installDate: '', history: [] });
+    saveData(appData); renderList(); closeModal('addModal');
+    showToast(`"${name}" aggiunto ✓`, 'success');
+  }
+};
+
+document.getElementById('newPartName').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('confirmAdd').onclick();
+});
+
+function openEditName(id) {
+  const part = appData.parts.find(p => p.id === id);
+  if (!part) return;
+  editingPartId = id;
+  document.getElementById('addModalTitle').textContent = 'Modifica componente';
+  document.getElementById('addModalSub').textContent = 'Cambia nome o icona';
+  document.getElementById('confirmAdd').textContent = 'Salva';
+  document.getElementById('newPartName').value = part.name;
+  setEmoji(part.icon);
+  openModal('addModal');
+  setTimeout(() => document.getElementById('newPartName').focus(), 300);
+}
+
+// ============================================================
+// MOVE
+// ============================================================
+function movePart(id, dir) {
+  const idx = appData.parts.findIndex(p => p.id === id);
+  const ni = idx + dir;
+  if (ni < 0 || ni >= appData.parts.length) return;
+  [appData.parts[idx], appData.parts[ni]] = [appData.parts[ni], appData.parts[idx]];
+  saveData(appData); renderList();
+}
+
+// ============================================================
+// DELETE
+// ============================================================
+function confirmDelete(id) {
+  pendingDeleteId = id;
+  const part = appData.parts.find(p => p.id === id);
+  document.getElementById('deleteModalSub').textContent =
+    `Elimina "${part.name}"? Verranno eliminati tutti i dati e lo storico. Non è reversibile.`;
+  openModal('deleteModal');
+}
+
+document.getElementById('cancelDelete').addEventListener('click', () => { pendingDeleteId = null; closeModal('deleteModal'); });
+
+document.getElementById('confirmDelete').addEventListener('click', () => {
+  if (!pendingDeleteId) return;
+  appData.parts = appData.parts.filter(p => p.id !== pendingDeleteId);
+  saveData(appData); renderList();
+  pendingDeleteId = null;
+  closeModal('deleteModal');
+  showToast('Componente eliminato');
+});
+
+// ============================================================
+// EXPORT JSON
+// ============================================================
+function updateExportMeta() {
+  const el = document.getElementById('exportMeta');
+  if (!el) return;
+  const n = appData.parts ? appData.parts.length : 0;
+  const ts = appData.updatedAt
+    ? new Date(appData.updatedAt).toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric' })
+    : '—';
+  el.textContent = `${n} componenti · ${ts}`;
+}
+
+document.getElementById('btnExport').addEventListener('click', () => {
+  const payload = JSON.stringify({ ...appData, exportedAt: new Date().toISOString() }, null, 2);
+  const blob = new Blob([payload], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pedalo-backup-${todayISO()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Backup esportato ✓', 'success');
+});
+
+// ============================================================
+// IMPORT JSON
+// ============================================================
+document.getElementById('btnImport').addEventListener('click', () => {
+  document.getElementById('importFileInput').value = '';
+  document.getElementById('importFileInput').click();
+});
+
+document.getElementById('importFileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!parsed.parts || !Array.isArray(parsed.parts)) throw new Error();
+      pendingImportData = parsed;
+      const n = parsed.parts.length;
+      const ts = parsed.exportedAt
+        ? new Date(parsed.exportedAt).toLocaleString('it-IT')
+        : 'data sconosciuta';
+      document.getElementById('importModalSub').textContent =
+        `Il backup contiene ${n} componenti (esportato il ${ts}). I dati attuali verranno sostituiti. Continuare?`;
+      openModal('importModal');
+    } catch {
+      showToast('File non valido ✗', 'error');
+    }
+  };
+  reader.readAsText(file);
+});
+
+document.getElementById('cancelImport').addEventListener('click', () => { pendingImportData = null; closeModal('importModal'); });
+
+document.getElementById('confirmImport').addEventListener('click', () => {
+  if (!pendingImportData) return;
+  appData = pendingImportData;
+  saveData(appData);
+  renderList();
+  pendingImportData = null;
+  closeModal('importModal');
+  showToast(`Importati ${appData.parts.length} componenti ✓`, 'success');
+});
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+document.getElementById('backBtn').addEventListener('click', () => { showView('viewList'); currentPartId = null; });
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' '+type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function todayISO() { return new Date().toISOString().split('T')[0]; }
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderList();
+updateExportMeta();
+</script>
+</body>
+</html>
