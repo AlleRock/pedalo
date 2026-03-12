@@ -9,14 +9,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pèdalo">
 <meta name="theme-color" content="#0e0e0e">
-<meta name="color-scheme" content="dark">
 <link rel="manifest" href="./manifest.json">
 <title>Pèdalo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
-    color-scheme: dark;
     --bg: #0e0e0e;
     --surface: #161616;
     --surface2: #1e1e1e;
@@ -33,7 +31,7 @@
   }
 
 - { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html { overflow-x: hidden; }
+  html { overflow-x: hidden; background: #0e0e0e; }
 
 body {
 background: var(–bg);
@@ -222,6 +220,34 @@ display: flex; align-items: center; justify-content: center; line-height: 1;
 /* DETAIL VIEW */
 .view { display: none; animation: slideIn 0.2s ease; }
 .view.active { display: block; }
+
+/* Override Safari dark mode — Pèdalo è sempre scura */
+@media (prefers-color-scheme: dark) {
+:root {
+–bg: #0e0e0e;
+–surface: #161616;
+–surface2: #1e1e1e;
+–border: #2a2a2a;
+–accent: #e8ff47;
+–accent2: #ff6b35;
+–strava: #fc4c02;
+–text: #f0f0f0;
+–text-muted: #666;
+}
+}
+@media (prefers-color-scheme: light) {
+:root {
+–bg: #0e0e0e;
+–surface: #161616;
+–surface2: #1e1e1e;
+–border: #2a2a2a;
+–accent: #e8ff47;
+–accent2: #ff6b35;
+–strava: #fc4c02;
+–text: #f0f0f0;
+–text-muted: #666;
+}
+}
 
 @keyframes slideIn {
 from { opacity: 0; transform: translateY(8px); }
