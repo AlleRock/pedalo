@@ -1191,24 +1191,50 @@ async function syncStravaKm() {
   icon.innerHTML = '<span class="spin">↻</span>';
 
   try {
+    // 1. Prendi il totale km ufficiale Strava direttamente dalla bici
+    const athleteResp = await fetch('https://www.strava.com/api/v3/athlete',
+      { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
+    );
+    if (!athleteResp.ok) throw new Error('athlete fetch failed');
+    const athlete = await athleteResp.json();
+    const bikeData = (athlete.bikes || []).find(b => b.id === selectedBikeId);
+    const officialKm = bikeData ? Math.round(bikeData.distance / 1000) : null;
+
+    // 2. Scarica le attività per costruire la timeline storica (usata per i km a data passata)
     const timeline = await fetchAllBikeActivities();
     if (!timeline) { btn.classList.remove('syncing'); icon.innerHTML = '↻'; return; }
 
-    const totalKm = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
+    // Totale: usiamo il dato ufficiale Strava (più preciso), 
+    // ma se non disponibile fallback sulla timeline
+    const totalKm = officialKm !== null
+      ? officialKm
+      : (timeline.length ? timeline[timeline.length - 1].cumKm : 0);
+
+    // Correzione offset: differenza tra ufficiale e timeline
+    // Serve per scalare correttamente i km a date passate
+    const timelineTotal = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
+    const offset = totalKm - timelineTotal; // km "mancanti" dalla timeline (attività senza gear_id)
+
     stravaTotalKm = totalKm;
     appData.stravaTotalKm = totalKm;
     appData.stravaTimeline = timeline;
+    appData.stravaTimelineOffset = offset; // salviamo per uso futuro
     appData.stravaLastSync = new Date().toISOString();
 
     // Ricalcola kmAtInstall per tutti i componenti con installDate
+    // Applichiamo l'offset proporzionalmente alla timeline
     appData.parts.forEach(part => {
       if (part.installDate) {
-        part.kmAtInstall = kmAtDate(timeline, part.installDate);
+        const kmFromTimeline = kmAtDate(timeline, part.installDate);
+        // Proporzione: se a quella data avevi X% dei km timeline, hai X% del totale ufficiale
+        const ratio = timelineTotal > 0 ? kmFromTimeline / timelineTotal : 0;
+        part.kmAtInstall = Math.round(ratio * totalKm);
       }
-      // Ricalcola anche i km nello storico
       part.history.forEach(h => {
-        if (h.date && h.kmAtSwap == null) {
-          h.kmAtSwap = kmAtDate(timeline, h.date);
+        if (h.date) {
+          const kmFromTimeline = kmAtDate(timeline, h.date);
+          const ratio = timelineTotal > 0 ? kmFromTimeline / timelineTotal : 0;
+          h.kmAtSwap = Math.round(ratio * totalKm);
         }
       });
     });
@@ -1218,7 +1244,6 @@ async function syncStravaKm() {
     renderList();
     if (currentPartId) updateKmDetailCard();
     showToast(`Sync completato: ${totalKm.toLocaleString('it-IT')} km ✓`, 'success');
-    // Aggiorna label con nome bici
     const lbl = document.getElementById('kmTotalLabel');
     if (lbl && appData.stravaBikeName) lbl.textContent = appData.stravaBikeName;
 
