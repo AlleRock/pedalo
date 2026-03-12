@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -30,525 +29,342 @@
     --radius: 12px;
   }
 
-- { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html { overflow-x: hidden; background: #0e0e0e; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { overflow-x: hidden; }
 
-body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘DM Sans’, sans-serif;
-min-height: 100vh;
-overflow-x: hidden;
-max-width: 100vw;
-}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-header {
-position: sticky; top: 0; z-index: 100;
-background: var(–bg);
-border-bottom: 1px solid var(–border);
-padding: 0 12px; height: 64px;
-display: flex; align-items: center; justify-content: space-between;
-gap: 8px; width: 100%;
-}
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; width: 100%;
+  }
 
-.logo {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 28px; letter-spacing: 2px;
-color: var(–accent); line-height: 1; flex-shrink: 0;
-}
-.logo span {
-color: var(–text-muted); font-size: 10px;
-font-family: ‘DM Sans’, sans-serif;
-letter-spacing: 0.5px; font-weight: 300;
-display: block; line-height: 1; margin-top: -2px;
-}
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 2px;
+    color: var(--accent); line-height: 1; flex-shrink: 0;
+  }
+  .logo span {
+    color: var(--text-muted); font-size: 10px;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.5px; font-weight: 300;
+    display: block; line-height: 1; margin-top: -2px;
+  }
 
-.header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
-.btn-strava {
-background: var(–strava); color: white;
-border: none; padding: 8px 10px;
-border-radius: var(–radius);
-font-family: ‘DM Sans’, sans-serif;
-font-weight: 500; font-size: 12px; cursor: pointer;
-display: flex; align-items: center; gap: 5px;
-transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
-}
-.btn-strava:active { transform: scale(0.96); }
-.btn-strava.connected { background: var(–surface2); border: 1px solid var(–border); color: var(–text-muted); font-size: 11px; padding: 8px 8px; }
+  .btn-strava {
+    background: var(--strava); color: white;
+    border: none; padding: 8px 10px;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500; font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-strava:active { transform: scale(0.96); }
+  .btn-strava.connected { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 11px; padding: 8px 8px; }
 
-.btn-add-main {
-background: var(–accent); color: #0e0e0e;
-border: none; padding: 9px 12px;
-border-radius: var(–radius);
-font-family: ‘DM Sans’, sans-serif;
-font-weight: 500; font-size: 13px; cursor: pointer;
-display: flex; align-items: center; gap: 5px;
-transition: all 0.15s; flex-shrink: 0;
-}
-.btn-add-main:active { transform: scale(0.96); }
+  .btn-add-main {
+    background: var(--accent); color: #0e0e0e;
+    border: none; padding: 9px 12px;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500; font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .btn-add-main:active { transform: scale(0.96); }
 
-main { max-width: 700px; margin: 0 auto; padding: 24px 16px 40px; }
+  main { max-width: 700px; margin: 0 auto; padding: 24px 16px 40px; }
 
-.section-label {
-font-size: 11px; font-weight: 500;
-letter-spacing: 2px; text-transform: uppercase;
-color: var(–text-muted); margin-bottom: 12px; padding-left: 4px;
-}
+  .section-label {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 12px; padding-left: 4px;
+  }
 
-/* STRAVA BANNER */
-.strava-banner {
-background: var(–surface);
-border: 1px solid var(–border);
-border-left: 3px solid var(–strava);
-border-radius: var(–radius);
-padding: 14px 16px;
-margin-bottom: 20px;
-display: flex; align-items: center; gap: 12px;
-}
-.strava-banner.hidden { display: none; }
-.strava-banner-icon { font-size: 24px; flex-shrink: 0; }
-.strava-banner-text { flex: 1; }
-.strava-banner-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-.strava-banner-sub { font-size: 12px; color: var(–text-muted); }
-.strava-banner-action {
-background: var(–strava); color: white; border: none;
-border-radius: 8px; padding: 8px 14px;
-font-family: ‘DM Sans’, sans-serif; font-size: 13px; font-weight: 500;
-cursor: pointer; white-space: nowrap; flex-shrink: 0;
-}
+  .strava-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--strava);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .strava-banner.hidden { display: none; }
+  .strava-banner-icon { font-size: 24px; flex-shrink: 0; }
+  .strava-banner-text { flex: 1; }
+  .strava-banner-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .strava-banner-sub { font-size: 12px; color: var(--text-muted); }
+  .strava-banner-action {
+    background: var(--strava); color: white; border: none;
+    border-radius: 8px; padding: 8px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
 
-/* KM SUMMARY */
-.km-summary {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 14px 16px;
-margin-bottom: 20px;
-display: none;
-align-items: center; gap: 12px;
-}
-.km-summary.show { display: flex; }
-.km-total { flex: 1; }
-.km-total-number {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 32px; letter-spacing: 1px;
-color: var(–accent); line-height: 1;
-}
-.km-total-label { font-size: 11px; color: var(–text-muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
-.km-sync-btn {
-background: none; border: 1px solid var(–border);
-border-radius: 8px; padding: 8px 12px;
-color: var(–text-muted); font-family: ‘DM Sans’, sans-serif;
-font-size: 12px; cursor: pointer;
-display: flex; align-items: center; gap: 6px;
-transition: all 0.15s;
-}
-.km-sync-btn:hover { border-color: var(–accent); color: var(–accent); }
-.km-sync-btn.syncing { opacity: 0.6; pointer-events: none; }
-.spin { animation: spin 1s linear infinite; display: inline-block; }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .km-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: none;
+    align-items: center; gap: 12px;
+  }
+  .km-summary.show { display: flex; }
+  .km-total { flex: 1; }
+  .km-total-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; letter-spacing: 1px;
+    color: var(--accent); line-height: 1;
+  }
+  .km-total-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .km-sync-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    color: var(--text-muted); font-family: 'DM Sans', sans-serif;
+    font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .km-sync-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .km-sync-btn.syncing { opacity: 0.6; pointer-events: none; }
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* PARTS LIST */
-.parts-list { display: flex; flex-direction: column; gap: 8px; }
+  .parts-list { display: flex; flex-direction: column; gap: 8px; }
 
-.part-card {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–radius);
-display: flex; align-items: center; overflow: hidden;
-transition: border-color 0.15s, transform 0.1s; cursor: pointer;
-}
-.part-card:active { transform: scale(0.99); }
-.part-card:hover { border-color: #3a3a3a; }
-.part-card.has-data { border-left: 3px solid var(–accent); }
+  .part-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex; align-items: center; overflow: hidden;
+    transition: border-color 0.15s, transform 0.1s; cursor: pointer;
+  }
+  .part-card:active { transform: scale(0.99); }
+  .part-card:hover { border-color: #3a3a3a; }
+  .part-card.has-data { border-left: 3px solid var(--accent); }
 
-.part-card-main {
-flex: 1; padding: 12px 14px;
-display: flex; align-items: center; gap: 12px; min-width: 0;
-}
+  .part-card-main {
+    flex: 1; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px; min-width: 0;
+  }
 
-.part-icon {
-width: 36px; height: 36px; background: var(–surface2);
-border-radius: 8px; display: flex; align-items: center;
-justify-content: center; font-size: 18px; flex-shrink: 0;
-}
+  .part-icon {
+    width: 36px; height: 36px; background: var(--surface2);
+    border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-size: 18px; flex-shrink: 0;
+  }
 
-.part-info { flex: 1; min-width: 0; }
+  .part-info { flex: 1; min-width: 0; }
+  .part-name { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .part-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.part-name {
-font-size: 15px; font-weight: 500;
-white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+  .part-km { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; padding-right: 4px; gap: 2px; }
+  .part-km-value { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 0.5px; line-height: 1; }
+  .part-km-value.ok { color: var(--success); }
+  .part-km-value.warn { color: var(--warn); }
+  .part-km-value.danger { color: var(--danger); }
+  .part-km-value.accent { color: var(--accent); }
+  .part-km-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-.part-meta {
-font-size: 12px; color: var(–text-muted); margin-top: 2px;
-white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+  .part-actions { display: flex; align-items: center; flex-shrink: 0; border-left: 1px solid var(--border); }
+  .part-btn {
+    background: none; border: none; color: var(--text-muted);
+    padding: 14px 11px; cursor: pointer; font-size: 14px;
+    transition: color 0.15s, background 0.15s;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .part-btn:hover { color: var(--text); background: var(--surface2); }
+  .part-btn.delete:hover { color: var(--danger); }
+  .part-btn.move:hover { color: var(--accent); }
+  .part-btn + .part-btn { border-left: 1px solid var(--border); }
+  .part-btn:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
 
-/* KM BADGE su card */
-.part-km {
-display: flex; flex-direction: column; align-items: flex-end;
-flex-shrink: 0; padding-right: 4px; gap: 2px;
-}
-.part-km-value {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 17px; letter-spacing: 0.5px; line-height: 1;
-}
-.part-km-value.ok { color: var(–success); }
-.part-km-value.warn { color: var(–warn); }
-.part-km-value.danger { color: var(–danger); }
-.part-km-value.none { color: var(–text-muted); font-size: 13px; font-family: ‘DM Sans’, sans-serif; }
-.part-km-label { font-size: 9px; color: var(–text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .view { display: none; animation: slideIn 0.2s ease; }
+  .view.active { display: block; }
 
-.part-actions {
-display: flex; align-items: center;
-flex-shrink: 0; border-left: 1px solid var(–border);
-}
+  @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-.part-btn {
-background: none; border: none; color: var(–text-muted);
-padding: 14px 11px; cursor: pointer; font-size: 14px;
-transition: color 0.15s, background 0.15s;
-display: flex; align-items: center; justify-content: center; line-height: 1;
-}
-.part-btn:hover { color: var(–text); background: var(–surface2); }
-.part-btn.delete:hover { color: var(–danger); }
-.part-btn.move:hover { color: var(–accent); }
-.part-btn + .part-btn { border-left: 1px solid var(–border); }
-.part-btn:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
+  .back-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: none; border: none; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    cursor: pointer; padding: 0; margin-bottom: 24px; transition: color 0.15s;
+  }
+  .back-btn:hover { color: var(--text); }
 
-/* DETAIL VIEW */
-.view { display: none; animation: slideIn 0.2s ease; }
-.view.active { display: block; }
+  .detail-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 16px; }
+  .detail-icon-wrap {
+    width: 56px; height: 56px; background: var(--surface2);
+    border-radius: 14px; display: flex; align-items: center;
+    justify-content: center; font-size: 28px; flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .detail-title-wrap { flex: 1; }
+  .detail-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; line-height: 1; }
+  .detail-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-/* Override Safari dark mode — Pèdalo è sempre scura */
-@media (prefers-color-scheme: dark) {
-:root {
-–bg: #0e0e0e;
-–surface: #161616;
-–surface2: #1e1e1e;
-–border: #2a2a2a;
-–accent: #e8ff47;
-–accent2: #ff6b35;
-–strava: #fc4c02;
-–text: #f0f0f0;
-–text-muted: #666;
-}
-}
-@media (prefers-color-scheme: light) {
-:root {
-–bg: #0e0e0e;
-–surface: #161616;
-–surface2: #1e1e1e;
-–border: #2a2a2a;
-–accent: #e8ff47;
-–accent2: #ff6b35;
-–strava: #fc4c02;
-–text: #f0f0f0;
-–text-muted: #666;
-}
-}
+  .km-detail-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 16px; display: none;
+  }
+  .km-detail-card.show { display: block; }
+  .km-detail-title { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+  .km-detail-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .km-stat { text-align: center; }
+  .km-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.5px; line-height: 1; }
+  .km-stat-value.accent { color: var(--accent); }
+  .km-stat-value.ok { color: var(--success); }
+  .km-stat-value.warn { color: var(--warn); }
+  .km-stat-value.danger { color: var(--danger); }
+  .km-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
 
-@keyframes slideIn {
-from { opacity: 0; transform: translateY(8px); }
-to { opacity: 1; transform: translateY(0); }
-}
+  .km-threshold-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .km-threshold-row label { font-size: 11px; white-space: nowrap; }
+  .km-threshold-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    padding: 8px 12px; outline: none; transition: border-color 0.15s; -webkit-appearance: none;
+  }
+  .km-threshold-input:focus { border-color: var(--accent); }
+  .km-threshold-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
 
-.back-btn {
-display: flex; align-items: center; gap: 8px;
-background: none; border: none; color: var(–text-muted);
-font-family: ‘DM Sans’, sans-serif; font-size: 14px;
-cursor: pointer; padding: 0; margin-bottom: 24px; transition: color 0.15s;
-}
-.back-btn:hover { color: var(–text); }
+  .form-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .form-section-title { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row:last-child { margin-bottom: 0; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
 
-.detail-header {
-display: flex; align-items: flex-start;
-justify-content: space-between; margin-bottom: 20px; gap: 16px;
-}
+  label { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
 
-.detail-icon-wrap {
-width: 56px; height: 56px; background: var(–surface2);
-border-radius: 14px; display: flex; align-items: center;
-justify-content: center; font-size: 28px; flex-shrink: 0;
-border: 1px solid var(–border);
-}
+  input[type="text"], input[type="date"], input[type="number"] {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    padding: 11px 14px; width: 100%; outline: none;
+    transition: border-color 0.15s; -webkit-appearance: none; color-scheme: dark;
+  }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--text-muted); }
 
-.detail-title-wrap { flex: 1; }
+  .btn-replace {
+    background: var(--accent2); color: white; border: none;
+    border-radius: var(--radius); padding: 16px 24px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 16px;
+    cursor: pointer; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all 0.15s; margin-bottom: 16px;
+  }
+  .btn-replace:active { transform: scale(0.98); }
 
-.detail-title {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 28px; letter-spacing: 1px; line-height: 1;
-}
-.detail-subtitle { font-size: 13px; color: var(–text-muted); margin-top: 4px; }
+  .btn-save {
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 24px; font-family: 'DM Sans', sans-serif;
+    font-weight: 400; font-size: 15px; cursor: pointer;
+    width: 100%; transition: all 0.15s; margin-bottom: 16px;
+  }
+  .btn-save:hover { border-color: var(--accent); color: var(--accent); }
 
-/* KM DETAIL CARD */
-.km-detail-card {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–radius); padding: 16px;
-margin-bottom: 16px;
-display: none;
-}
-.km-detail-card.show { display: block; }
-.km-detail-title {
-font-size: 11px; font-weight: 500; letter-spacing: 2px;
-text-transform: uppercase; color: var(–text-muted); margin-bottom: 12px;
-}
-.km-detail-row {
-display: grid; grid-template-columns: 1fr 1fr 1fr;
-gap: 12px;
-}
-.km-stat { text-align: center; }
-.km-stat-value {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 26px; letter-spacing: 0.5px; line-height: 1;
-}
-.km-stat-value.accent { color: var(–accent); }
-.km-stat-value.ok { color: var(–success); }
-.km-stat-value.warn { color: var(–warn); }
-.km-stat-value.danger { color: var(–danger); }
-.km-stat-label { font-size: 10px; color: var(–text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
+  .history-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px; animation: slideIn 0.2s ease;
+  }
+  .history-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); margin-top: 5px; flex-shrink: 0; }
+  .history-content { flex: 1; }
+  .history-date { font-size: 11px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; font-weight: 500; margin-bottom: 4px; }
+  .history-desc { font-size: 14px; color: var(--text); }
+  .history-brand { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .history-km { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .history-actions { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-left: 4px; }
+  .history-btn { background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: all 0.15s; line-height: 1; }
+  .history-btn:hover { background: var(--surface2); color: var(--text); }
+  .history-btn.del:hover { color: var(--danger); }
+  .empty-history { text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 14px; font-style: italic; }
 
-.km-threshold-row {
-display: flex; align-items: center; gap: 10px; margin-top: 14px;
-padding-top: 14px; border-top: 1px solid var(–border);
-}
-.km-threshold-row label { font-size: 11px; white-space: nowrap; }
-.km-threshold-input {
-flex: 1; background: var(–surface2); border: 1px solid var(–border);
-border-radius: 8px; color: var(–text);
-font-family: ‘DM Sans’, sans-serif; font-size: 14px;
-padding: 8px 12px; outline: none; transition: border-color 0.15s;
--webkit-appearance: none;
-}
-.km-threshold-input:focus { border-color: var(–accent); }
-.km-threshold-label { font-size: 12px; color: var(–text-muted); white-space: nowrap; }
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 200; display: none;
+    align-items: flex-end; justify-content: center;
+    padding: 20px; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; width: 100%; max-width: 480px;
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; margin-bottom: 6px; }
+  .modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .modal-form-group { margin-bottom: 14px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-cancel { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); border-radius: 10px; padding: 13px; font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.15s; }
+  .btn-confirm { flex: 2; background: var(--accent); border: none; color: #0e0e0e; border-radius: 10px; padding: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px; cursor: pointer; transition: all 0.15s; }
+  .btn-confirm:active, .btn-cancel:active { transform: scale(0.97); }
+  .confirm-modal-title { color: var(--danger); }
+  .btn-confirm-delete { flex: 2; background: var(--danger); border: none; color: white; border-radius: 10px; padding: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px; cursor: pointer; transition: all 0.15s; }
 
-/* FORM */
-.form-section {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–radius); padding: 20px; margin-bottom: 16px;
-}
-.form-section-title {
-font-size: 11px; font-weight: 500; letter-spacing: 2px;
-text-transform: uppercase; color: var(–text-muted); margin-bottom: 16px;
-}
-.form-row {
-display: grid; grid-template-columns: 1fr 1fr;
-gap: 12px; margin-bottom: 12px;
-}
-.form-row:last-child { margin-bottom: 0; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-group.full { grid-column: 1 / -1; }
+  .emoji-picker { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 14px; }
+  .emoji-option { width: 100%; aspect-ratio: 1; background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
+  .emoji-option.selected { border-color: var(--accent); background: rgba(232,255,71,0.1); }
 
-label {
-font-size: 11px; font-weight: 500; letter-spacing: 1px;
-text-transform: uppercase; color: var(–text-muted);
-}
+  .bike-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+  .bike-option { background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.15s; }
+  .bike-option:hover { border-color: #3a3a3a; }
+  .bike-option.selected { border-color: var(--strava); background: rgba(252,76,2,0.08); }
+  .bike-option-icon { font-size: 24px; flex-shrink: 0; }
+  .bike-option-info { flex: 1; }
+  .bike-option-name { font-size: 15px; font-weight: 500; }
+  .bike-option-km { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .bike-option-check { font-size: 18px; color: var(--strava); opacity: 0; transition: opacity 0.15s; }
+  .bike-option.selected .bike-option-check { opacity: 1; }
 
-input[type=“text”], input[type=“date”], input[type=“number”] {
-background: var(–surface2); border: 1px solid var(–border);
-border-radius: 8px; color: var(–text);
-font-family: ‘DM Sans’, sans-serif; font-size: 15px;
-padding: 11px 14px; width: 100%; outline: none;
-transition: border-color 0.15s; -webkit-appearance: none; color-scheme: dark;
-}
-input:focus { border-color: var(–accent); }
-input::placeholder { color: var(–text-muted); }
+  .backup-section { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 28px; }
+  .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .backup-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 16px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .backup-card:active { transform: scale(0.98); }
+  .backup-card.export-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .backup-card.import-card:hover { border-color: var(--accent2); background: var(--surface2); }
+  .backup-icon { font-size: 26px; line-height: 1; }
+  .backup-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; }
+  .export-card .backup-title { color: var(--accent); }
+  .import-card .backup-title { color: var(--accent2); }
+  .backup-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .backup-meta { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
 
-.btn-replace {
-background: var(–accent2); color: white; border: none;
-border-radius: var(–radius); padding: 16px 24px;
-font-family: ‘DM Sans’, sans-serif; font-weight: 500; font-size: 16px;
-cursor: pointer; width: 100%;
-display: flex; align-items: center; justify-content: center; gap: 10px;
-transition: all 0.15s; margin-bottom: 16px;
-}
-.btn-replace:active { transform: scale(0.98); }
+  .offline-badge { display: none; position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 6px 14px; border-radius: 20px; z-index: 99; gap: 6px; align-items: center; }
+  .offline-badge.show { display: flex; }
 
-.btn-save {
-background: var(–surface2); color: var(–text);
-border: 1px solid var(–border); border-radius: var(–radius);
-padding: 14px 24px; font-family: ‘DM Sans’, sans-serif;
-font-weight: 400; font-size: 15px; cursor: pointer;
-width: 100%; transition: all 0.15s; margin-bottom: 16px;
-}
-.btn-save:hover { border-color: var(–accent); color: var(–accent); }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 30px; font-size: 14px; z-index: 999; opacity: 0; transition: all 0.25s ease; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
 
-/* HISTORY */
-.history-list { display: flex; flex-direction: column; gap: 10px; }
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 15px; }
 
-.history-item {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–radius); padding: 14px 16px;
-display: flex; align-items: flex-start; gap: 12px;
-animation: slideIn 0.2s ease;
-}
-.history-dot {
-width: 10px; height: 10px; border-radius: 50%;
-background: var(–accent); margin-top: 5px; flex-shrink: 0;
-}
-.history-content { flex: 1; }
-.history-date {
-font-size: 11px; letter-spacing: 1px; color: var(–accent);
-text-transform: uppercase; font-weight: 500; margin-bottom: 4px;
-}
-.history-desc { font-size: 14px; color: var(–text); }
-.history-brand { font-size: 12px; color: var(–text-muted); margin-top: 3px; }
-.history-km { font-size: 12px; color: var(–text-muted); margin-top: 3px; }
-
-.history-actions {
-display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-left: 4px;
-}
-.history-btn {
-background: none; border: none; color: var(–text-muted);
-font-size: 13px; cursor: pointer; padding: 4px 6px;
-border-radius: 6px; transition: all 0.15s; line-height: 1;
-}
-.history-btn:hover { background: var(–surface2); color: var(–text); }
-.history-btn.del:hover { color: var(–danger); }
-
-.empty-history {
-text-align: center; padding: 32px 16px;
-color: var(–text-muted); font-size: 14px; font-style: italic;
-}
-
-/* MODALS */
-.modal-overlay {
-position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-z-index: 200; display: none;
-align-items: flex-end; justify-content: center;
-padding: 20px; backdrop-filter: blur(4px);
-}
-.modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.modal {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: 16px; padding: 24px; width: 100%; max-width: 480px;
-animation: slideUp 0.2s ease;
-}
-@keyframes slideUp {
-from { transform: translateY(20px); opacity: 0; }
-to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-title {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 22px; letter-spacing: 1px; margin-bottom: 6px;
-}
-.modal-sub { font-size: 13px; color: var(–text-muted); margin-bottom: 20px; }
-.modal-form-group { margin-bottom: 14px; }
-.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-
-.btn-cancel {
-flex: 1; background: var(–surface2); border: 1px solid var(–border);
-color: var(–text-muted); border-radius: 10px; padding: 13px;
-font-family: ‘DM Sans’, sans-serif; font-size: 15px; cursor: pointer; transition: all 0.15s;
-}
-.btn-confirm {
-flex: 2; background: var(–accent); border: none; color: #0e0e0e;
-border-radius: 10px; padding: 13px;
-font-family: ‘DM Sans’, sans-serif; font-weight: 500; font-size: 15px;
-cursor: pointer; transition: all 0.15s;
-}
-.btn-confirm:active, .btn-cancel:active { transform: scale(0.97); }
-
-.confirm-modal-title { color: var(–danger); }
-.btn-confirm-delete {
-flex: 2; background: var(–danger); border: none; color: white;
-border-radius: 10px; padding: 13px;
-font-family: ‘DM Sans’, sans-serif; font-weight: 500; font-size: 15px;
-cursor: pointer; transition: all 0.15s;
-}
-
-.emoji-picker {
-display: grid; grid-template-columns: repeat(6, 1fr);
-gap: 8px; margin-bottom: 14px;
-}
-.emoji-option {
-width: 100%; aspect-ratio: 1; background: var(–surface2);
-border: 2px solid var(–border); border-radius: 10px; font-size: 22px;
-cursor: pointer; display: flex; align-items: center; justify-content: center;
-transition: all 0.1s;
-}
-.emoji-option.selected { border-color: var(–accent); background: rgba(232,255,71,0.1); }
-
-/* BIKE PICKER */
-.bike-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
-.bike-option {
-background: var(–surface2); border: 2px solid var(–border);
-border-radius: 10px; padding: 14px 16px;
-display: flex; align-items: center; gap: 12px;
-cursor: pointer; transition: all 0.15s;
-}
-.bike-option:hover { border-color: #3a3a3a; }
-.bike-option.selected { border-color: var(–strava); background: rgba(252,76,2,0.08); }
-.bike-option-icon { font-size: 24px; flex-shrink: 0; }
-.bike-option-info { flex: 1; }
-.bike-option-name { font-size: 15px; font-weight: 500; }
-.bike-option-km { font-size: 12px; color: var(–text-muted); margin-top: 2px; }
-.bike-option-check { font-size: 18px; color: var(–strava); opacity: 0; transition: opacity 0.15s; }
-.bike-option.selected .bike-option-check { opacity: 1; }
-
-/* BACKUP */
-.backup-section {
-margin-top: 40px; border-top: 1px solid var(–border); padding-top: 28px;
-}
-.backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-.backup-card {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–radius); padding: 18px 16px;
-display: flex; flex-direction: column; gap: 6px;
-cursor: pointer; transition: border-color 0.15s, background 0.15s;
-}
-.backup-card:active { transform: scale(0.98); }
-.backup-card.export-card:hover { border-color: var(–accent); background: var(–surface2); }
-.backup-card.import-card:hover { border-color: var(–accent2); background: var(–surface2); }
-
-.backup-icon { font-size: 26px; line-height: 1; }
-.backup-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; letter-spacing: 1px; }
-.export-card .backup-title { color: var(–accent); }
-.import-card .backup-title { color: var(–accent2); }
-.backup-desc { font-size: 12px; color: var(–text-muted); line-height: 1.4; }
-.backup-meta { font-size: 11px; color: var(–text-muted); font-style: italic; margin-top: 2px; }
-
-/* OFFLINE */
-.offline-badge {
-display: none; position: fixed; top: 70px; left: 50%;
-transform: translateX(-50%);
-background: var(–surface); border: 1px solid var(–border);
-color: var(–text-muted); font-size: 12px;
-padding: 6px 14px; border-radius: 20px; z-index: 99;
-gap: 6px; align-items: center;
-}
-.offline-badge.show { display: flex; }
-
-/* TOAST */
-.toast {
-position: fixed; bottom: 24px; left: 50%;
-transform: translateX(-50%) translateY(20px);
-background: var(–surface); border: 1px solid var(–border);
-color: var(–text); padding: 12px 20px;
-border-radius: 30px; font-size: 14px; z-index: 999;
-opacity: 0; transition: all 0.25s ease;
-white-space: nowrap; pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast.success { border-color: var(–success); color: var(–success); }
-.toast.error { border-color: var(–danger); color: var(–danger); }
-
-.empty-state { text-align: center; padding: 48px 20px; color: var(–text-muted); }
-.empty-state-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-state-text { font-size: 15px; }
-
-@media (min-width: 600px) {
-main { padding: 32px 24px 40px; }
-.form-row { gap: 16px; }
-}
+  @media (min-width: 600px) { main { padding: 32px 24px 40px; } .form-row { gap: 16px; } }
 </style>
-
 </head>
 <body>
 
@@ -577,7 +393,6 @@ main { padding: 32px 24px 40px; }
 <div class="toast" id="toast"></div>
 
 <!-- MODAL: Aggiungi/Modifica -->
-
 <div class="modal-overlay" id="addModal">
   <div class="modal">
     <div class="modal-title" id="addModalTitle">Nuovo componente</div>
@@ -611,7 +426,6 @@ main { padding: 32px 24px 40px; }
 </div>
 
 <!-- MODAL: Sostituisci -->
-
 <div class="modal-overlay" id="replaceModal">
   <div class="modal">
     <div class="modal-title">Sostituisci componente</div>
@@ -640,7 +454,6 @@ main { padding: 32px 24px 40px; }
 </div>
 
 <!-- MODAL: Elimina -->
-
 <div class="modal-overlay" id="deleteModal">
   <div class="modal">
     <div class="modal-title confirm-modal-title">Elimina componente</div>
@@ -653,7 +466,6 @@ main { padding: 32px 24px 40px; }
 </div>
 
 <!-- MODAL: Importa -->
-
 <div class="modal-overlay" id="importModal">
   <div class="modal">
     <div class="modal-title" style="color: var(--accent2)">Importa backup</div>
@@ -666,7 +478,6 @@ main { padding: 32px 24px 40px; }
 </div>
 
 <!-- MODAL: Modifica sostituzione -->
-
 <div class="modal-overlay" id="editHistoryModal">
   <div class="modal">
     <div class="modal-title">Modifica sostituzione</div>
@@ -695,7 +506,6 @@ main { padding: 32px 24px 40px; }
 </div>
 
 <!-- MODAL: Selezione bici -->
-
 <div class="modal-overlay" id="bikeSelectModal">
   <div class="modal">
     <div class="modal-title" style="color: var(--strava)">Seleziona la tua bici</div>
@@ -709,7 +519,6 @@ main { padding: 32px 24px 40px; }
 </div>
 
 <!-- MODAL: Disconnetti Strava -->
-
 <div class="modal-overlay" id="stravaDisconnectModal">
   <div class="modal">
     <div class="modal-title" style="color: var(--strava)">Disconnetti Strava</div>
@@ -722,170 +531,135 @@ main { padding: 32px 24px 40px; }
 </div>
 
 <main>
-  <!-- VIEW: Lista -->
   <div class="view active" id="viewList">
-
-```
-<!-- Banner connetti Strava -->
-<div class="strava-banner" id="stravaBanner">
-  <div class="strava-banner-icon">🚴</div>
-  <div class="strava-banner-text">
-    <div class="strava-banner-title">Connetti Strava</div>
-    <div class="strava-banner-sub">Sincronizza i km automaticamente dopo ogni uscita</div>
-  </div>
-  <button class="strava-banner-action" id="stravaBannerBtn">Connetti</button>
-</div>
-
-<!-- KM Summary (quando connesso) -->
-<div class="km-summary" id="kmSummary">
-  <div class="km-total">
-    <div class="km-total-number" id="kmTotalNumber">—</div>
-    <div class="km-total-label" id="kmTotalLabel">km totali bici</div>
-  </div>
-  <button class="km-sync-btn" id="kmSyncBtn">
-    <span id="kmSyncIcon">↻</span> Aggiorna
-  </button>
-</div>
-
-<div class="section-label">Componenti</div>
-<div class="parts-list" id="partsList"></div>
-
-<!-- Backup -->
-<div class="backup-section">
-  <div class="section-label">Dati &amp; Backup</div>
-  <div class="backup-grid">
-    <div class="backup-card export-card" id="btnExport">
-      <div class="backup-icon">📤</div>
-      <div class="backup-title">Esporta</div>
-      <div class="backup-desc">Salva tutti i dati in un file JSON sul tuo dispositivo</div>
-      <div class="backup-meta" id="exportMeta">—</div>
+    <div class="strava-banner" id="stravaBanner">
+      <div class="strava-banner-icon">🚴</div>
+      <div class="strava-banner-text">
+        <div class="strava-banner-title">Connetti Strava</div>
+        <div class="strava-banner-sub">Sincronizza i km automaticamente dopo ogni uscita</div>
+      </div>
+      <button class="strava-banner-action" id="stravaBannerBtn">Connetti</button>
     </div>
-    <div class="backup-card import-card" id="btnImport">
-      <div class="backup-icon">📥</div>
-      <div class="backup-title">Importa</div>
-      <div class="backup-desc">Ripristina da un backup JSON precedentemente salvato</div>
-      <div class="backup-meta">Sostituisce i dati correnti</div>
+
+    <div class="km-summary" id="kmSummary">
+      <div class="km-total">
+        <div class="km-total-number" id="kmTotalNumber">—</div>
+        <div class="km-total-label" id="kmTotalLabel">km totali bici</div>
+      </div>
+      <button class="km-sync-btn" id="kmSyncBtn">
+        <span id="kmSyncIcon">↻</span> Aggiorna
+      </button>
+    </div>
+
+    <div class="section-label">Componenti</div>
+    <div class="parts-list" id="partsList"></div>
+
+    <div class="backup-section">
+      <div class="section-label">Dati &amp; Backup</div>
+      <div class="backup-grid">
+        <div class="backup-card export-card" id="btnExport">
+          <div class="backup-icon">📤</div>
+          <div class="backup-title">Esporta</div>
+          <div class="backup-desc">Salva tutti i dati in un file JSON sul tuo dispositivo</div>
+          <div class="backup-meta" id="exportMeta">—</div>
+        </div>
+        <div class="backup-card import-card" id="btnImport">
+          <div class="backup-icon">📥</div>
+          <div class="backup-title">Importa</div>
+          <div class="backup-desc">Ripristina da un backup JSON precedentemente salvato</div>
+          <div class="backup-meta">Sostituisce i dati correnti</div>
+        </div>
+      </div>
+      <input type="file" id="importFileInput" accept=".json" style="display:none">
     </div>
   </div>
-  <input type="file" id="importFileInput" accept=".json" style="display:none">
-</div>
-```
-
-  </div>
-
-  <!-- VIEW: Dettaglio -->
 
   <div class="view" id="viewDetail">
     <button class="back-btn" id="backBtn">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Tutti i componenti
     </button>
-
-```
-<div class="detail-header">
-  <div class="detail-icon-wrap" id="detailIcon">🔧</div>
-  <div class="detail-title-wrap">
-    <div class="detail-title" id="detailTitle">Componente</div>
-    <div class="detail-subtitle" id="detailSubtitle">Nessun dato inserito</div>
-  </div>
-</div>
-
-<!-- KM card (solo se Strava connesso) -->
-<div class="km-detail-card" id="kmDetailCard">
-  <div class="km-detail-title">Chilometri</div>
-  <div class="km-detail-row">
-    <div class="km-stat">
-      <div class="km-stat-value accent" id="kmStatCurrent">—</div>
-      <div class="km-stat-label">percorsi</div>
+    <div class="detail-header">
+      <div class="detail-icon-wrap" id="detailIcon">🔧</div>
+      <div class="detail-title-wrap">
+        <div class="detail-title" id="detailTitle">Componente</div>
+        <div class="detail-subtitle" id="detailSubtitle">Nessun dato inserito</div>
+      </div>
     </div>
-    <div class="km-stat">
-      <div class="km-stat-value" id="kmStatThresholdDisplay">—</div>
-      <div class="km-stat-label">soglia</div>
+    <div class="km-detail-card" id="kmDetailCard">
+      <div class="km-detail-title">Chilometri</div>
+      <div class="km-detail-row">
+        <div class="km-stat">
+          <div class="km-stat-value accent" id="kmStatCurrent">—</div>
+          <div class="km-stat-label">percorsi</div>
+        </div>
+        <div class="km-stat">
+          <div class="km-stat-value" id="kmStatThresholdDisplay">—</div>
+          <div class="km-stat-label">soglia</div>
+        </div>
+        <div class="km-stat">
+          <div class="km-stat-value" id="kmStatRemaining">—</div>
+          <div class="km-stat-label">rimanenti</div>
+        </div>
+      </div>
+      <div class="km-threshold-row">
+        <label>Soglia km</label>
+        <input type="number" class="km-threshold-input" id="kmThresholdInput" placeholder="es. 2000" min="0" />
+        <span class="km-threshold-label">km</span>
+      </div>
     </div>
-    <div class="km-stat">
-      <div class="km-stat-value" id="kmStatRemaining">—</div>
-      <div class="km-stat-label">rimanenti</div>
+    <div class="form-section">
+      <div class="form-section-title">Componente attuale</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Marchio</label>
+          <input type="text" id="fieldBrand" placeholder="es. Shimano" />
+        </div>
+        <div class="form-group">
+          <label>Modello</label>
+          <input type="text" id="fieldModel" placeholder="es. Deore XT" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Data installazione</label>
+          <input type="date" id="fieldInstallDate" />
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="km-threshold-row">
-    <label>Soglia km</label>
-    <input type="number" class="km-threshold-input" id="kmThresholdInput" placeholder="es. 2000" min="0" />
-    <span class="km-threshold-label">km</span>
-  </div>
-</div>
-
-<div class="form-section">
-  <div class="form-section-title">Componente attuale</div>
-  <div class="form-row">
-    <div class="form-group">
-      <label>Marchio</label>
-      <input type="text" id="fieldBrand" placeholder="es. Shimano" />
-    </div>
-    <div class="form-group">
-      <label>Modello</label>
-      <input type="text" id="fieldModel" placeholder="es. Deore XT" />
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group full">
-      <label>Data installazione</label>
-      <input type="date" id="fieldInstallDate" />
-    </div>
-  </div>
-</div>
-
-<button class="btn-save" id="btnSave">Salva modifiche</button>
-<button class="btn-replace" id="btnReplace">
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9a7 7 0 1 0 14 0 7 7 0 0 0-14 0z" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-  Registra sostituzione
-</button>
-
-<div class="section-label" style="margin-top: 8px;">Storico sostituzioni</div>
-<div class="history-list" id="historyList"></div>
-```
-
+    <button class="btn-save" id="btnSave">Salva modifiche</button>
+    <button class="btn-replace" id="btnReplace">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9a7 7 0 1 0 14 0 7 7 0 0 0-14 0z" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Registra sostituzione
+    </button>
+    <div class="section-label" style="margin-top: 8px;">Storico sostituzioni</div>
+    <div class="history-list" id="historyList"></div>
   </div>
 </main>
 
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
 const STRAVA_CLIENT_ID = '210700';
 const STRAVA_REDIRECT_URI = 'https://allerock.github.io/pedalo/';
 const STRAVA_SCOPE = 'read,profile:read_all,activity:read';
 
-// ============================================================
-// SERVICE WORKER
-// ============================================================
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
+  window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
 }
 
-// ============================================================
-// OFFLINE
-// ============================================================
-function syncOffline() {
-  document.getElementById('offlineBadge').classList.toggle('show', !navigator.onLine);
-}
+function syncOffline() { document.getElementById('offlineBadge').classList.toggle('show', !navigator.onLine); }
 window.addEventListener('online', syncOffline);
 window.addEventListener('offline', syncOffline);
 syncOffline();
 
-// ============================================================
-// DATA
-// ============================================================
 const DEFAULT_PARTS = [
   { id: 'telaio',            name: 'Telaio',                    icon: '🦾' },
   { id: 'cerchio_ant',       name: 'Cerchione anteriore',       icon: '🛞' },
   { id: 'ruota_ant',         name: 'Ruota anteriore',           icon: '🛞' },
-  { id: 'camera_ant',        name: "Camera d'aria anteriore",   icon: '🔩' },
+  { id: 'camera_ant',        name: "Camera d'aria anteriore",  icon: '🔩' },
   { id: 'pastiglie_ant',     name: 'Pastiglie freni anteriori', icon: '🔩' },
   { id: 'cerchio_post',      name: 'Cerchione posteriore',      icon: '🛞' },
   { id: 'ruota_post',        name: 'Ruota posteriore',          icon: '🛞' },
-  { id: 'camera_post',       name: "Camera d'aria posteriore",  icon: '🔩' },
+  { id: 'camera_post',       name: "Camera d'aria posteriore", icon: '🔩' },
   { id: 'pastiglie_post',    name: 'Pastiglie freni posteriori',icon: '🔩' },
   { id: 'deragliatore_ant',  name: 'Deragliatore anteriore',    icon: '⚙️' },
   { id: 'guarnitura',        name: 'Guarnitura',                icon: '⚙️' },
@@ -908,143 +682,69 @@ function loadData() {
     return JSON.parse(raw);
   } catch(e) { return initData(); }
 }
-
 function initData() {
   const data = { parts: DEFAULT_PARTS.map(p => ({ ...p, brand: '', model: '', installDate: '', kmThreshold: 0, history: [] })) };
-  saveData(data);
-  return data;
+  saveData(data); return data;
 }
-
 function saveData(data) {
   data.updatedAt = new Date().toISOString();
   try { localStorage.setItem('pedalo_data', JSON.stringify(data)); } catch(e) {}
   updateExportMeta();
 }
-
 let appData = loadData();
 
-// ============================================================
-// STATE
-// ============================================================
 let currentPartId = null;
 let selectedEmoji = '🔧';
 let pendingDeleteId = null;
 let editingPartId = null;
 let pendingImportData = null;
-let selectedBikeId = null;   // gear_id Strava della bici selezionata
-let pendingBikeId = null;    // selezione temporanea nel modal
+let selectedBikeId = null;
+let pendingBikeId = null;
 
-// ============================================================
-// STRAVA AUTH
-// ============================================================
 let stravaToken = null;
 let stravaAthlete = null;
-let stravaTotalKm = null; // km totali bici da Strava
+let stravaTotalKm = null;
 
 function loadStravaToken() {
   try {
     const raw = localStorage.getItem('pedalo_strava');
     if (!raw) return null;
-    const t = JSON.parse(raw);
-    // controlla scadenza
-    if (t.expires_at && Date.now() / 1000 > t.expires_at) return t; // scaduto ma lo teniamo per refresh
-    return t;
+    return JSON.parse(raw);
   } catch { return null; }
 }
-
-function saveStravaToken(t) {
-  localStorage.setItem('pedalo_strava', JSON.stringify(t));
-}
-
+function saveStravaToken(t) { localStorage.setItem('pedalo_strava', JSON.stringify(t)); }
 function clearStravaToken() {
   localStorage.removeItem('pedalo_strava');
-  stravaToken = null;
-  stravaAthlete = null;
-  stravaTotalKm = null;
-}
-
-async function stravaRefreshIfNeeded(tokenData) {
-  if (!tokenData) return null;
-  const now = Math.floor(Date.now() / 1000);
-  if (tokenData.expires_at && now < tokenData.expires_at - 300) return tokenData; // ancora valido
-
-  // refresh
-  try {
-    const resp = await fetch('https://www.strava.com/oauth/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        client_id: STRAVA_CLIENT_ID,
-        client_secret: '', // non disponibile lato client
-        grant_type: 'refresh_token',
-        refresh_token: tokenData.refresh_token
-      })
-    });
-    // NOTA: il refresh con solo client_id senza client_secret non funziona.
-    // Per app pubbliche statiche Strava non supporta il refresh lato client.
-    // Il token dura 6h — al riavvio dell'app riautentichiamo silenziosamente
-    // se necessario (redirect a Strava, poi ritorno automatico).
-    if (!resp.ok) return null;
-    const newToken = await resp.json();
-    saveStravaToken(newToken);
-    return newToken;
-  } catch { return null; }
+  stravaToken = null; stravaAthlete = null; stravaTotalKm = null;
 }
 
 function stravaLogin() {
-  // Salviamo la view corrente per tornare qui dopo il redirect
   localStorage.setItem('pedalo_strava_pending', '1');
   const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(STRAVA_REDIRECT_URI)}&approval_prompt=auto&scope=${STRAVA_SCOPE}`;
   window.location.href = url;
 }
 
 async function stravaExchangeCode(code) {
-  // Strava richiede il client_secret per l'exchange — non può stare nel client.
-  // Usiamo il token endpoint con un proxy CORS-friendly.
-  // Per GitHub Pages usiamo il Strava token endpoint direttamente:
-  // NOTA IMPORTANTE: per sicurezza il client_secret NON va mai nel codice pubblico.
-  // La soluzione corretta è un piccolo proxy (Netlify Function, Cloudflare Worker).
-  // Per ora usiamo l'implicit flow alternativo: Strava non supporta implicit per le sue API,
-  // quindi usiamo il PKCE-less public flow con client_secret vuoto e gestiamo l'errore
-  // mostrando istruzioni all'utente.
-
-  // Tentativo diretto (funziona se l'app Strava è configurata come "mobile" o "other")
   try {
     const resp = await fetch('https://www.strava.com/oauth/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        client_id: STRAVA_CLIENT_ID,
-        client_secret: window._STRAVA_SECRET || '',
-        grant_type: 'authorization_code',
-        code
-      })
+      body: JSON.stringify({ client_id: STRAVA_CLIENT_ID, client_secret: window._STRAVA_SECRET || '', grant_type: 'authorization_code', code })
     });
     if (!resp.ok) return null;
     return await resp.json();
   } catch { return null; }
 }
 
-// Gestione callback OAuth (quando Strava redirige qui con ?code=...)
 async function handleStravaCallback() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
   const error = params.get('error');
-
-  if (error) {
-    showToast('Connessione Strava annullata', 'error');
-    window.history.replaceState({}, '', window.location.pathname);
-    return;
-  }
-
+  if (error) { showToast('Connessione Strava annullata', 'error'); window.history.replaceState({}, '', window.location.pathname); return; }
   if (!code) return;
-
-  // Pulisce l'URL
   window.history.replaceState({}, '', window.location.pathname);
   localStorage.removeItem('pedalo_strava_pending');
-
   showToast('Connessione a Strava in corso...', '');
-
   const tokenData = await stravaExchangeCode(code);
   if (tokenData && tokenData.access_token) {
     saveStravaToken(tokenData);
@@ -1054,66 +754,36 @@ async function handleStravaCallback() {
     await syncStravaKm();
     showToast(`Connesso come ${stravaAthlete?.firstname || 'atleta'} ✓`, 'success');
   } else {
-    // Strava richiede client_secret lato server — mostriamo istruzioni
     showStravaSecretPrompt(code);
   }
 }
 
 function showStravaSecretPrompt(code) {
-  // Fallback: chiediamo il client_secret all'utente (una volta sola)
-  // In produzione andrebbe un proxy server. Per uso personale questo è accettabile.
-  const secret = prompt(
-    'Pèdalo è un\'app personale.\n\n' +
-    'Per completare la connessione Strava inserisci il tuo Client Secret\n' +
-    '(lo trovi su strava.com/settings/api).\n\n' +
-    'Viene salvato solo sul tuo dispositivo, mai inviato a terzi.'
-  );
-  if (!secret) {
-    showToast('Connessione annullata', 'error');
-    return;
-  }
+  const secret = prompt('Pèdalo è un\'app personale.\n\nPer completare la connessione Strava inserisci il tuo Client Secret\n(lo trovi su strava.com/settings/api).\n\nViene salvato solo sul tuo dispositivo, mai inviato a terzi.');
+  if (!secret) { showToast('Connessione annullata', 'error'); return; }
   window._STRAVA_SECRET = secret;
   localStorage.setItem('pedalo_strava_secret', secret);
   stravaExchangeCode(code).then(tokenData => {
     if (tokenData && tokenData.access_token) {
-      saveStravaToken(tokenData);
-      stravaToken = tokenData;
-      stravaAthlete = tokenData.athlete;
-      updateStravaUI();
-      syncStravaKm();
+      saveStravaToken(tokenData); stravaToken = tokenData; stravaAthlete = tokenData.athlete;
+      updateStravaUI(); syncStravaKm();
       showToast(`Connesso come ${stravaAthlete?.firstname || 'atleta'} ✓`, 'success');
-    } else {
-      showToast('Errore connessione Strava ✗', 'error');
-    }
+    } else { showToast('Errore connessione Strava ✗', 'error'); }
   });
 }
 
-// ============================================================
-// STRAVA KM SYNC
-// ============================================================
-
-// Recupera le bici dell'atleta da Strava
 async function fetchAthleteBikes() {
-  const resp = await fetch('https://www.strava.com/api/v3/athlete',
-    { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
-  );
+  const resp = await fetch('https://www.strava.com/api/v3/athlete', { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } });
   if (!resp.ok) return [];
   const athlete = await resp.json();
   return athlete.bikes || [];
 }
 
-// Mostra modal selezione bici
 async function showBikeSelectModal(onConfirm) {
   showToast('Recupero bici da Strava...', '');
   const bikes = await fetchAthleteBikes();
-
-  if (!bikes.length) {
-    showToast('Nessuna bici trovata su Strava', 'error');
-    return;
-  }
-
+  if (!bikes.length) { showToast('Nessuna bici trovata su Strava', 'error'); return; }
   if (bikes.length === 1) {
-    // Una sola bici — seleziona automaticamente
     selectedBikeId = bikes[0].id;
     appData.stravaBikeId = selectedBikeId;
     appData.stravaBikeName = bikes[0].name;
@@ -1121,13 +791,11 @@ async function showBikeSelectModal(onConfirm) {
     if (onConfirm) onConfirm();
     return;
   }
-
   const list = document.getElementById('bikeList');
   pendingBikeId = selectedBikeId || bikes[0].id;
-
   list.innerHTML = bikes.map(b => `
     <div class="bike-option ${b.id === pendingBikeId ? 'selected' : ''}"
-         onclick="selectBikeOption('${b.id}', '${b.name.replace(/'/g,"\\'")}', this)">
+         onclick="selectBikeOption('${b.id}', this)">
       <div class="bike-option-icon">🚴</div>
       <div class="bike-option-info">
         <div class="bike-option-name">${b.name}</div>
@@ -1135,7 +803,6 @@ async function showBikeSelectModal(onConfirm) {
       </div>
       <div class="bike-option-check">✓</div>
     </div>`).join('');
-
   document.getElementById('confirmBikeSelect').onclick = () => {
     if (!pendingBikeId) return;
     const bike = bikes.find(b => b.id === pendingBikeId);
@@ -1146,71 +813,43 @@ async function showBikeSelectModal(onConfirm) {
     closeModal('bikeSelectModal');
     if (onConfirm) onConfirm();
   };
-
   openModal('bikeSelectModal');
 }
 
-function selectBikeOption(id, name, el) {
+function selectBikeOption(id, el) {
   pendingBikeId = id;
   document.querySelectorAll('.bike-option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-// Scarica attività bici filtrate per gear_id e costruisce timeline cumulativa
 async function fetchAllBikeActivities() {
   const BIKE_TYPES = ['Ride','VirtualRide','EBikeRide','GravelRide','MountainBikeRide'];
   const since = Math.floor(new Date('2010-01-01').getTime() / 1000);
-  let page = 1;
-  let allActivities = [];
-  let keepGoing = true;
-
+  let page = 1, allActivities = [], keepGoing = true;
   while (keepGoing) {
     const resp = await fetch(
       `https://www.strava.com/api/v3/athlete/activities?per_page=200&page=${page}&after=${since}`,
       { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
     );
-
     if (!resp.ok) {
-      if (resp.status === 401) {
-        clearStravaToken();
-        updateStravaUI();
-        showToast('Sessione Strava scaduta, riconnetti', 'error');
-        return null;
-      }
+      if (resp.status === 401) { clearStravaToken(); updateStravaUI(); showToast('Sessione Strava scaduta, riconnetti', 'error'); return null; }
       break;
     }
-
     const activities = await resp.json();
     if (!activities.length) { keepGoing = false; break; }
-
     activities.forEach(a => {
-      // Filtra per tipo bici E per gear_id se selezionato
-      const rightType = BIKE_TYPES.includes(a.type);
-      const rightBike = !selectedBikeId || a.gear_id === selectedBikeId;
-      if (rightType && rightBike) {
-        allActivities.push({
-          ts: Math.floor(new Date(a.start_date).getTime() / 1000),
-          meters: a.distance
-        });
+      if (BIKE_TYPES.includes(a.type) && (!selectedBikeId || a.gear_id === selectedBikeId)) {
+        allActivities.push({ ts: Math.floor(new Date(a.start_date).getTime() / 1000), meters: a.distance });
       }
     });
-
     if (activities.length < 200) keepGoing = false;
     page++;
   }
-
   allActivities.sort((a, b) => a.ts - b.ts);
-
   let cum = 0;
-  const timeline = allActivities.map(a => {
-    cum += a.meters / 1000;
-    return { ts: a.ts, cumKm: Math.round(cum) };
-  });
-
-  return timeline;
+  return allActivities.map(a => { cum += a.meters / 1000; return { ts: a.ts, cumKm: Math.round(cum) }; });
 }
 
-// Km cumulativi fino a una data ISO
 function kmAtDate(timeline, dateISO) {
   if (!timeline || !timeline.length) return 0;
   const ts = Math.floor(new Date(dateISO).getTime() / 1000);
@@ -1222,14 +861,20 @@ function kmAtDate(timeline, dateISO) {
   return km;
 }
 
+// Km scalati a una data usando timeline + totale ufficiale
+function kmAtDateScaled(dateISO) {
+  if (!dateISO) return null;
+  const timeline = appData.stravaTimeline;
+  const totalKm = appData.stravaTotalKm;
+  if (!timeline || !totalKm) return null;
+  const timelineTotal = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
+  if (timelineTotal === 0) return 0;
+  return Math.round((kmAtDate(timeline, dateISO) / timelineTotal) * totalKm);
+}
+
 async function syncStravaKm() {
   if (!stravaToken) return;
-
-  // Se non è ancora stata scelta la bici, mostra il modal prima di procedere
-  if (!selectedBikeId) {
-    await showBikeSelectModal(() => syncStravaKm());
-    return;
-  }
+  if (!selectedBikeId) { await showBikeSelectModal(() => syncStravaKm()); return; }
 
   const btn = document.getElementById('kmSyncBtn');
   const icon = document.getElementById('kmSyncIcon');
@@ -1237,7 +882,7 @@ async function syncStravaKm() {
   icon.innerHTML = '<span class="spin">↻</span>';
 
   try {
-    // 1. Prendi il totale km ufficiale Strava direttamente dalla bici
+    // 1. Totale ufficiale dalla bici su Strava
     const athleteResp = await fetch('https://www.strava.com/api/v3/athlete',
       { headers: { 'Authorization': `Bearer ${stravaToken.access_token}` } }
     );
@@ -1246,43 +891,30 @@ async function syncStravaKm() {
     const bikeData = (athlete.bikes || []).find(b => b.id === selectedBikeId);
     const officialKm = bikeData ? Math.round(bikeData.distance / 1000) : null;
 
-    // 2. Scarica le attività per costruire la timeline storica (usata per i km a data passata)
+    // 2. Timeline attività per calcoli storici
     const timeline = await fetchAllBikeActivities();
     if (!timeline) { btn.classList.remove('syncing'); icon.innerHTML = '↻'; return; }
 
-    // Totale: usiamo il dato ufficiale Strava (più preciso), 
-    // ma se non disponibile fallback sulla timeline
-    const totalKm = officialKm !== null
-      ? officialKm
-      : (timeline.length ? timeline[timeline.length - 1].cumKm : 0);
-
-    // Correzione offset: differenza tra ufficiale e timeline
-    // Serve per scalare correttamente i km a date passate
     const timelineTotal = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
-    const offset = totalKm - timelineTotal; // km "mancanti" dalla timeline (attività senza gear_id)
+    const totalKm = officialKm !== null ? officialKm : timelineTotal;
 
     stravaTotalKm = totalKm;
     appData.stravaTotalKm = totalKm;
     appData.stravaTimeline = timeline;
-    appData.stravaTimelineOffset = offset; // salviamo per uso futuro
     appData.stravaLastSync = new Date().toISOString();
 
-    // Ricalcola kmAtInstall per tutti i componenti con installDate
-    // Applichiamo l'offset proporzionalmente alla timeline
+    // Ricalcola kmAtInstall per tutti i componenti
     appData.parts.forEach(part => {
       if (part.installDate) {
-        const kmFromTimeline = kmAtDate(timeline, part.installDate);
-        // Proporzione: se a quella data avevi X% dei km timeline, hai X% del totale ufficiale
-        const ratio = timelineTotal > 0 ? kmFromTimeline / timelineTotal : 0;
+        const ratio = timelineTotal > 0 ? kmAtDate(timeline, part.installDate) / timelineTotal : 0;
         part.kmAtInstall = Math.round(ratio * totalKm);
       }
-      // Ricalcola kmAtSwap e kmDone per tutto lo storico
+      // Ricalcola storico
       part.history.forEach((h, idx) => {
         if (h.date) {
-          const kmFromTimeline = kmAtDate(timeline, h.date);
-          const ratio = timelineTotal > 0 ? kmFromTimeline / timelineTotal : 0;
+          const ratio = timelineTotal > 0 ? kmAtDate(timeline, h.date) / timelineTotal : 0;
           h.kmAtSwap = Math.round(ratio * totalKm);
-          // kmDone = km alla sostituzione - km all'installazione di quel componente
+          // km fatti da questo componente
           const prevEntry = idx > 0 ? part.history[idx - 1] : null;
           const kmAtThisInstall = prevEntry
             ? Math.round((kmAtDate(timeline, prevEntry.date) / (timelineTotal||1)) * totalKm)
@@ -1296,35 +928,21 @@ async function syncStravaKm() {
     updateKmSummary();
     renderList();
     if (currentPartId) updateKmDetailCard();
-    showToast(`Sync completato: ${totalKm.toLocaleString('it-IT')} km ✓`, 'success');
     const lbl = document.getElementById('kmTotalLabel');
     if (lbl && appData.stravaBikeName) lbl.textContent = appData.stravaBikeName;
+    showToast(`Sync completato: ${totalKm.toLocaleString('it-IT')} km ✓`, 'success');
 
   } catch(e) {
     showToast('Errore sync Strava ✗', 'error');
   }
-
   btn.classList.remove('syncing');
   icon.innerHTML = '↻';
 }
 
-// Km totali bici scalati a una data, usando timeline + offset ufficiale
-function kmAtDateScaled(dateISO) {
-  if (!dateISO) return null;
-  const timeline = appData.stravaTimeline;
-  const totalKm = appData.stravaTotalKm;
-  if (!timeline || !totalKm) return null;
-  const timelineTotal = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
-  const kmFromTimeline = kmAtDate(timeline, dateISO);
-  if (timelineTotal === 0) return 0;
-  return Math.round((kmFromTimeline / timelineTotal) * totalKm);
-}
-
 function kmSinceInstall(part) {
   if (!appData.stravaTotalKm || !part.installDate) return null;
-  const kmAtInstall = part.kmAtInstall != null
-    ? part.kmAtInstall
-    : (appData.stravaTimeline ? kmAtDate(appData.stravaTimeline, part.installDate) : 0);
+  const kmAtInstall = part.kmAtInstall != null ? part.kmAtInstall
+    : (appData.stravaTimeline ? kmAtDateScaled(part.installDate) : 0);
   return Math.max(0, appData.stravaTotalKm - kmAtInstall);
 }
 
@@ -1344,23 +962,18 @@ function updateKmSummary() {
     summary.classList.add('show');
     num.textContent = (appData.stravaTotalKm || 0).toLocaleString('it-IT');
     if (lbl && appData.stravaBikeName) lbl.textContent = appData.stravaBikeName;
-  } else {
-    summary.classList.remove('show');
-  }
+  } else { summary.classList.remove('show'); }
 }
 
 function updateKmDetailCard() {
   const card = document.getElementById('kmDetailCard');
   const part = appData.parts.find(p => p.id === currentPartId);
   if (!part || !appData.stravaTotalKm) { card.classList.remove('show'); return; }
-
   card.classList.add('show');
-
   const km = kmSinceInstall(part);
   const threshold = part.kmThreshold || 0;
   const remaining = threshold > 0 ? Math.max(0, threshold - km) : null;
   const color = km !== null ? kmColor(km, threshold) : 'accent';
-
   document.getElementById('kmStatCurrent').textContent = km !== null ? km.toLocaleString('it-IT') : '—';
   document.getElementById('kmStatCurrent').className = `km-stat-value ${color}`;
   document.getElementById('kmStatThresholdDisplay').textContent = threshold > 0 ? threshold.toLocaleString('it-IT') : '—';
@@ -1369,41 +982,23 @@ function updateKmDetailCard() {
   document.getElementById('kmThresholdInput').value = threshold || '';
 }
 
-// ============================================================
-// STRAVA UI
-// ============================================================
 function updateStravaUI() {
   const btn = document.getElementById('btnStrava');
   const banner = document.getElementById('stravaBanner');
-
   if (stravaToken) {
     btn.textContent = `🟠 ${stravaAthlete?.firstname || 'Strava'}`;
-    btn.classList.add('connected');
-    banner.classList.add('hidden');
-    updateKmSummary();
+    btn.classList.add('connected'); banner.classList.add('hidden'); updateKmSummary();
   } else if (appData.stravaTotalKm) {
-    // Ha dati precedenti ma token scaduto
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg> Riconnetti`;
-    btn.classList.remove('connected');
-    banner.classList.add('hidden');
-    updateKmSummary();
+    btn.classList.remove('connected'); banner.classList.add('hidden'); updateKmSummary();
   } else {
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg> Connetti Strava`;
-    btn.classList.remove('connected');
-    banner.classList.remove('hidden');
+    btn.classList.remove('connected'); banner.classList.remove('hidden');
   }
 }
 
-document.getElementById('btnStrava').addEventListener('click', () => {
-  if (stravaToken) {
-    openModal('stravaDisconnectModal');
-  } else {
-    stravaLogin();
-  }
-});
-
+document.getElementById('btnStrava').addEventListener('click', () => { if (stravaToken) openModal('stravaDisconnectModal'); else stravaLogin(); });
 document.getElementById('stravaBannerBtn').addEventListener('click', stravaLogin);
-
 document.getElementById('cancelBikeSelect').addEventListener('click', () => closeModal('bikeSelectModal'));
 document.getElementById('cancelStravaDisconnect').addEventListener('click', () => closeModal('stravaDisconnectModal'));
 document.getElementById('confirmStravaDisconnect').addEventListener('click', () => {
@@ -1411,58 +1006,34 @@ document.getElementById('confirmStravaDisconnect').addEventListener('click', () 
   localStorage.removeItem('pedalo_strava_secret');
   window._STRAVA_SECRET = null;
   selectedBikeId = null;
-  delete appData.stravaTotalKm;
-  delete appData.stravaLastSync;
-  delete appData.stravaBikeId;
-  delete appData.stravaBikeName;
-  delete appData.stravaTimeline;
-  saveData(appData);
-  updateStravaUI();
-  renderList();
-  closeModal('stravaDisconnectModal');
+  delete appData.stravaTotalKm; delete appData.stravaLastSync;
+  delete appData.stravaBikeId; delete appData.stravaBikeName; delete appData.stravaTimeline;
+  saveData(appData); updateStravaUI(); renderList(); closeModal('stravaDisconnectModal');
   showToast('Strava disconnesso');
 });
-
 document.getElementById('kmSyncBtn').addEventListener('click', syncStravaKm);
-
-// Soglia km
 document.getElementById('kmThresholdInput').addEventListener('change', () => {
   const part = appData.parts.find(p => p.id === currentPartId);
   if (!part) return;
   part.kmThreshold = parseInt(document.getElementById('kmThresholdInput').value) || 0;
-  saveData(appData);
-  updateKmDetailCard();
-  renderList();
+  saveData(appData); updateKmDetailCard(); renderList();
 });
 
-// ============================================================
-// RENDER LIST
-// ============================================================
 function renderList() {
   const list = document.getElementById('partsList');
   if (!appData.parts.length) {
     list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🚲</div><div class="empty-state-text">Nessun componente. Aggiungine uno!</div></div>`;
     return;
   }
-
   list.innerHTML = appData.parts.map((p, i) => {
     const hasData = p.brand || p.model || p.installDate;
-    const meta = hasData
-      ? [p.brand, p.model].filter(Boolean).join(' ') + (p.installDate ? ` · dal ${formatDate(p.installDate)}` : '')
-      : 'Nessun dato inserito';
-
-    // KM badge
+    const meta = hasData ? [p.brand, p.model].filter(Boolean).join(' ') + (p.installDate ? ` · dal ${formatDate(p.installDate)}` : '') : 'Nessun dato inserito';
     let kmBadge = '';
     if (appData.stravaTotalKm && p.installDate) {
       const km = kmSinceInstall(p);
       const color = kmColor(km, p.kmThreshold);
-      kmBadge = `
-        <div class="part-km">
-          <div class="part-km-value ${color}">${km.toLocaleString('it-IT')}</div>
-          <div class="part-km-label">km</div>
-        </div>`;
+      kmBadge = `<div class="part-km"><div class="part-km-value ${color}">${km.toLocaleString('it-IT')}</div><div class="part-km-label">km</div></div>`;
     }
-
     return `
       <div class="part-card ${hasData ? 'has-data' : ''}" onclick="openDetail('${p.id}')">
         <div class="part-card-main">
@@ -1474,18 +1045,15 @@ function renderList() {
           ${kmBadge}
         </div>
         <div class="part-actions">
-          <button class="part-btn move" ${i===0?'disabled':''} onclick="event.stopPropagation();movePart('${p.id}',-1)" title="Su">▲</button>
-          <button class="part-btn move" ${i===appData.parts.length-1?'disabled':''} onclick="event.stopPropagation();movePart('${p.id}',1)" title="Giù">▼</button>
-          <button class="part-btn" onclick="event.stopPropagation();openEditName('${p.id}')" title="Modifica">✏️</button>
-          <button class="part-btn delete" onclick="event.stopPropagation();confirmDelete('${p.id}')" title="Elimina">🗑</button>
+          <button class="part-btn move" ${i===0?'disabled':''} onclick="event.stopPropagation();movePart('${p.id}',-1)">▲</button>
+          <button class="part-btn move" ${i===appData.parts.length-1?'disabled':''} onclick="event.stopPropagation();movePart('${p.id}',1)">▼</button>
+          <button class="part-btn" onclick="event.stopPropagation();openEditName('${p.id}')">✏️</button>
+          <button class="part-btn delete" onclick="event.stopPropagation();confirmDelete('${p.id}')">🗑</button>
         </div>
       </div>`;
   }).join('');
 }
 
-// ============================================================
-// DETAIL
-// ============================================================
 function openDetail(id) {
   currentPartId = id;
   const part = appData.parts.find(p => p.id === id);
@@ -1495,25 +1063,16 @@ function openDetail(id) {
   document.getElementById('fieldBrand').value = part.brand || '';
   document.getElementById('fieldModel').value = part.model || '';
   document.getElementById('fieldInstallDate').value = part.installDate || '';
-  updateDetailSubtitle(part);
-  updateKmDetailCard();
-  renderHistory(part.history);
-  showView('viewDetail');
+  updateDetailSubtitle(part); updateKmDetailCard(); renderHistory(part.history); showView('viewDetail');
 }
 
 function updateDetailSubtitle(part) {
-  document.getElementById('detailSubtitle').textContent =
-    (part.brand || part.model)
-      ? [part.brand, part.model].filter(Boolean).join(' ')
-      : 'Nessun dato inserito';
+  document.getElementById('detailSubtitle').textContent = (part.brand || part.model) ? [part.brand, part.model].filter(Boolean).join(' ') : 'Nessun dato inserito';
 }
 
 function renderHistory(history) {
   const list = document.getElementById('historyList');
-  if (!history || !history.length) {
-    list.innerHTML = `<div class="empty-history">Nessuna sostituzione registrata</div>`;
-    return;
-  }
+  if (!history || !history.length) { list.innerHTML = `<div class="empty-history">Nessuna sostituzione registrata</div>`; return; }
   list.innerHTML = [...history].reverse().map(h => `
     <div class="history-item">
       <div class="history-dot"></div>
@@ -1522,18 +1081,15 @@ function renderHistory(history) {
         <div class="history-desc">${h.newBrand||h.newModel ? 'Sostituito con: '+[h.newBrand,h.newModel].filter(Boolean).join(' ') : 'Sostituzione registrata'}</div>
         ${h.note ? `<div class="history-brand">📝 ${h.note}</div>` : ''}
         ${h.prevBrand||h.prevModel ? `<div class="history-brand">Precedente: ${[h.prevBrand,h.prevModel].filter(Boolean).join(' ')}</div>` : ''}
-        ${h.kmDone != null ? `<div class="history-km">🚴 ${h.kmDone.toLocaleString('it-IT')} km percorsi con questo componente</div>` : h.kmAtSwap != null ? `<div class="history-km">🚴 ${h.kmAtSwap.toLocaleString('it-IT')} km totali alla sostituzione</div>` : ''}
+        ${h.kmDone != null ? `<div class="history-km">🚴 ${h.kmDone.toLocaleString('it-IT')} km percorsi con questo componente</div>` : h.kmAtSwap != null ? `<div class="history-km">🚴 ${h.kmAtSwap.toLocaleString('it-IT')} km alla sostituzione</div>` : ''}
       </div>
       <div class="history-actions">
-        <button class="history-btn" onclick="openEditHistory(${h.ts})" title="Modifica">✏️</button>
-        <button class="history-btn del" onclick="deleteHistory(${h.ts})" title="Elimina">🗑</button>
+        <button class="history-btn" onclick="openEditHistory(${h.ts})">✏️</button>
+        <button class="history-btn del" onclick="deleteHistory(${h.ts})">🗑</button>
       </div>
     </div>`).join('');
 }
 
-// ============================================================
-// EDIT / DELETE HISTORY
-// ============================================================
 let editingHistoryTs = null;
 
 function openEditHistory(ts) {
@@ -1553,80 +1109,47 @@ function deleteHistory(ts) {
   const part = appData.parts.find(p => p.id === currentPartId);
   if (!part) return;
   part.history = part.history.filter(h => h.ts !== ts);
-  saveData(appData);
-  renderHistory(part.history);
-  showToast('Sostituzione eliminata');
+  saveData(appData); renderHistory(part.history); showToast('Sostituzione eliminata');
 }
 
-document.getElementById('cancelEditHistory').addEventListener('click', () => {
-  editingHistoryTs = null;
-  closeModal('editHistoryModal');
-});
-
+document.getElementById('cancelEditHistory').addEventListener('click', () => { editingHistoryTs = null; closeModal('editHistoryModal'); });
 document.getElementById('confirmEditHistory').addEventListener('click', () => {
   const part = appData.parts.find(p => p.id === currentPartId);
   if (!part || !editingHistoryTs) return;
   const h = part.history.find(h => h.ts === editingHistoryTs);
   if (!h) return;
-
   h.date = document.getElementById('editHistoryDate').value;
   h.newBrand = document.getElementById('editHistoryBrand').value.trim();
   h.newModel = document.getElementById('editHistoryModel').value.trim();
   h.note = document.getElementById('editHistoryNote').value.trim();
-
-  // Ricalcola kmAtSwap e kmDone se cambia la data
   if (h.date) {
     h.kmAtSwap = kmAtDateScaled(h.date);
-    // Recupera kmAtInstall del pezzo precedente dallo storico
-    const part = appData.parts.find(p => p.id === currentPartId);
-    if (part) {
-      const idx = part.history.findIndex(x => x.ts === editingHistoryTs);
-      const prevEntry = idx > 0 ? part.history[idx - 1] : null;
-      const kmAtInstallForThis = prevEntry
-        ? kmAtDateScaled(prevEntry.date)
-        : (part.kmAtInstall || 0);
-      h.kmDone = h.kmAtSwap != null && kmAtInstallForThis != null
-        ? Math.max(0, h.kmAtSwap - kmAtInstallForThis)
-        : null;
-    }
+    const part2 = appData.parts.find(p => p.id === currentPartId);
+    const idx = part2.history.findIndex(x => x.ts === editingHistoryTs);
+    const prevEntry = idx > 0 ? part2.history[idx - 1] : null;
+    const kmAtInstallForThis = prevEntry ? kmAtDateScaled(prevEntry.date) : (part2.kmAtInstall || 0);
+    h.kmDone = h.kmAtSwap != null && kmAtInstallForThis != null ? Math.max(0, h.kmAtSwap - kmAtInstallForThis) : null;
   }
-
   editingHistoryTs = null;
-  saveData(appData);
-  renderHistory(part.history);
-  closeModal('editHistoryModal');
+  saveData(appData); renderHistory(part.history); closeModal('editHistoryModal');
   showToast('Sostituzione aggiornata ✓', 'success');
 });
 
-// ============================================================
-// SAVE
-// ============================================================
 document.getElementById('btnSave').addEventListener('click', () => {
   const part = appData.parts.find(p => p.id === currentPartId);
   if (!part) return;
   part.brand = document.getElementById('fieldBrand').value.trim();
   part.model = document.getElementById('fieldModel').value.trim();
   const newInstallDate = document.getElementById('fieldInstallDate').value;
-  // Se cambia la data di installazione, ricalcola kmAtInstall dalla timeline Strava
   if (newInstallDate !== part.installDate) {
-    if (appData.stravaTimeline && newInstallDate) {
-      part.kmAtInstall = kmAtDate(appData.stravaTimeline, newInstallDate);
-    } else if (appData.stravaTotalKm && newInstallDate) {
-      // Nessuna timeline disponibile, usa il totale attuale (meno preciso)
-      part.kmAtInstall = appData.stravaTotalKm;
-    }
+    if (appData.stravaTimeline && newInstallDate) part.kmAtInstall = kmAtDateScaled(newInstallDate);
+    else if (appData.stravaTotalKm && newInstallDate) part.kmAtInstall = appData.stravaTotalKm;
   }
   part.installDate = newInstallDate;
-  saveData(appData);
-  updateDetailSubtitle(part);
-  updateKmDetailCard();
-  renderList();
+  saveData(appData); updateDetailSubtitle(part); updateKmDetailCard(); renderList();
   showToast('Modifiche salvate ✓', 'success');
 });
 
-// ============================================================
-// REPLACE
-// ============================================================
 document.getElementById('btnReplace').addEventListener('click', () => {
   const part = appData.parts.find(p => p.id === currentPartId);
   document.getElementById('replaceModalSub').textContent = `Sostituzione: ${part.name}`;
@@ -1636,9 +1159,7 @@ document.getElementById('btnReplace').addEventListener('click', () => {
   document.getElementById('replaceNote').value = '';
   openModal('replaceModal');
 });
-
 document.getElementById('cancelReplace').addEventListener('click', () => closeModal('replaceModal'));
-
 document.getElementById('confirmReplace').addEventListener('click', () => {
   const part = appData.parts.find(p => p.id === currentPartId);
   if (!part) return;
@@ -1646,74 +1167,42 @@ document.getElementById('confirmReplace').addEventListener('click', () => {
   const newBrand = document.getElementById('replaceNewBrand').value.trim();
   const newModel = document.getElementById('replaceNewModel').value.trim();
   const note = document.getElementById('replaceNote').value.trim();
-
-  // Calcola km totali alla data della sostituzione (non oggi!)
   const kmAtSwapDate = kmAtDateScaled(date);
-  // Km fatti da questo componente = km totali alla sostituzione - km totali all'installazione
-  const kmDoneByPart = (kmAtSwapDate != null && part.kmAtInstall != null)
-    ? Math.max(0, kmAtSwapDate - part.kmAtInstall)
-    : null;
-
-  part.history.push({
-    date, note, ts: Date.now(),
-    prevBrand: part.brand, prevModel: part.model, prevInstall: part.installDate,
-    newBrand, newModel,
-    kmAtSwap: kmAtSwapDate,   // km totali bici alla data sostituzione
-    kmDone: kmDoneByPart      // km fatti da questo componente
-  });
-
+  const kmDoneByPart = (kmAtSwapDate != null && part.kmAtInstall != null) ? Math.max(0, kmAtSwapDate - part.kmAtInstall) : null;
+  part.history.push({ date, note, ts: Date.now(), prevBrand: part.brand, prevModel: part.model, prevInstall: part.installDate, newBrand, newModel, kmAtSwap: kmAtSwapDate, kmDone: kmDoneByPart });
   if (newBrand) part.brand = newBrand;
   if (newModel) part.model = newModel;
   part.installDate = date;
-  // Il nuovo componente parte dai km di oggi alla data di sostituzione
   part.kmAtInstall = kmAtSwapDate != null ? kmAtSwapDate : (appData.stravaTotalKm || 0);
-
   document.getElementById('fieldBrand').value = part.brand;
   document.getElementById('fieldModel').value = part.model;
   document.getElementById('fieldInstallDate').value = part.installDate;
-
-  saveData(appData);
-  renderHistory(part.history);
-  updateDetailSubtitle(part);
-  updateKmDetailCard();
-  renderList();
-  closeModal('replaceModal');
-  showToast('Sostituzione registrata ✓', 'success');
+  saveData(appData); renderHistory(part.history); updateDetailSubtitle(part); updateKmDetailCard(); renderList();
+  closeModal('replaceModal'); showToast('Sostituzione registrata ✓', 'success');
 });
 
-// ============================================================
-// ADD / EDIT
-// ============================================================
 document.getElementById('btnAddPart').addEventListener('click', () => {
   editingPartId = null;
   document.getElementById('addModalTitle').textContent = 'Nuovo componente';
   document.getElementById('addModalSub').textContent = "Scegli un'icona e dai un nome al pezzo";
   document.getElementById('confirmAdd').textContent = 'Aggiungi';
   document.getElementById('newPartName').value = '';
-  setEmoji('🔧');
-  openModal('addModal');
+  setEmoji('🔧'); openModal('addModal');
   setTimeout(() => document.getElementById('newPartName').focus(), 300);
 });
-
 document.getElementById('cancelAdd').addEventListener('click', () => closeModal('addModal'));
-
-document.querySelectorAll('.emoji-option').forEach(el => {
-  el.addEventListener('click', () => setEmoji(el.dataset.emoji));
-});
-
+document.querySelectorAll('.emoji-option').forEach(el => el.addEventListener('click', () => setEmoji(el.dataset.emoji)));
 function setEmoji(e) {
   selectedEmoji = e;
   document.querySelectorAll('.emoji-option').forEach(el => el.classList.toggle('selected', el.dataset.emoji === e));
 }
-
 document.getElementById('confirmAdd').onclick = () => {
   const name = document.getElementById('newPartName').value.trim();
   if (!name) { document.getElementById('newPartName').focus(); return; }
   if (editingPartId) {
     const part = appData.parts.find(p => p.id === editingPartId);
     if (part) { part.name = name; part.icon = selectedEmoji; }
-    editingPartId = null;
-    saveData(appData); renderList(); closeModal('addModal');
+    editingPartId = null; saveData(appData); renderList(); closeModal('addModal');
     showToast('Componente aggiornato ✓', 'success');
   } else {
     appData.parts.push({ id: 'c_'+Date.now(), name, icon: selectedEmoji, brand: '', model: '', installDate: '', kmThreshold: 0, history: [] });
@@ -1721,11 +1210,7 @@ document.getElementById('confirmAdd').onclick = () => {
     showToast(`"${name}" aggiunto ✓`, 'success');
   }
 };
-
-document.getElementById('newPartName').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('confirmAdd').onclick();
-});
-
+document.getElementById('newPartName').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('confirmAdd').onclick(); });
 function openEditName(id) {
   const part = appData.parts.find(p => p.id === id);
   if (!part) return;
@@ -1734,14 +1219,10 @@ function openEditName(id) {
   document.getElementById('addModalSub').textContent = 'Cambia nome o icona';
   document.getElementById('confirmAdd').textContent = 'Salva';
   document.getElementById('newPartName').value = part.name;
-  setEmoji(part.icon);
-  openModal('addModal');
+  setEmoji(part.icon); openModal('addModal');
   setTimeout(() => document.getElementById('newPartName').focus(), 300);
 }
 
-// ============================================================
-// MOVE
-// ============================================================
 function movePart(id, dir) {
   const idx = appData.parts.findIndex(p => p.id === id);
   const ni = idx + dir;
@@ -1750,60 +1231,39 @@ function movePart(id, dir) {
   saveData(appData); renderList();
 }
 
-// ============================================================
-// DELETE
-// ============================================================
 function confirmDelete(id) {
   pendingDeleteId = id;
   const part = appData.parts.find(p => p.id === id);
-  document.getElementById('deleteModalSub').textContent =
-    `Elimina "${part.name}"? Verranno eliminati tutti i dati e lo storico. Non è reversibile.`;
+  document.getElementById('deleteModalSub').textContent = `Elimina "${part.name}"? Verranno eliminati tutti i dati e lo storico. Non è reversibile.`;
   openModal('deleteModal');
 }
-
 document.getElementById('cancelDelete').addEventListener('click', () => { pendingDeleteId = null; closeModal('deleteModal'); });
-
 document.getElementById('confirmDelete').addEventListener('click', () => {
   if (!pendingDeleteId) return;
   appData.parts = appData.parts.filter(p => p.id !== pendingDeleteId);
-  saveData(appData); renderList();
-  pendingDeleteId = null; closeModal('deleteModal');
+  saveData(appData); renderList(); pendingDeleteId = null; closeModal('deleteModal');
   showToast('Componente eliminato');
 });
 
-// ============================================================
-// EXPORT / IMPORT
-// ============================================================
 function updateExportMeta() {
   const el = document.getElementById('exportMeta');
   if (!el) return;
   const n = appData.parts ? appData.parts.length : 0;
-  const ts = appData.updatedAt
-    ? new Date(appData.updatedAt).toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric' })
-    : '—';
+  const ts = appData.updatedAt ? new Date(appData.updatedAt).toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric' }) : '—';
   el.textContent = `${n} componenti · ${ts}`;
 }
-
 document.getElementById('btnExport').addEventListener('click', () => {
   const payload = JSON.stringify({ ...appData, exportedAt: new Date().toISOString() }, null, 2);
   const blob = new Blob([payload], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `pedalo-backup-${todayISO()}.json`;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
+  a.href = url; a.download = `pedalo-backup-${todayISO()}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   showToast('Backup esportato ✓', 'success');
 });
-
-document.getElementById('btnImport').addEventListener('click', () => {
-  document.getElementById('importFileInput').value = '';
-  document.getElementById('importFileInput').click();
-});
-
+document.getElementById('btnImport').addEventListener('click', () => { document.getElementById('importFileInput').value = ''; document.getElementById('importFileInput').click(); });
 document.getElementById('importFileInput').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
     try {
@@ -1812,96 +1272,43 @@ document.getElementById('importFileInput').addEventListener('change', e => {
       pendingImportData = parsed;
       const n = parsed.parts.length;
       const ts = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString('it-IT') : 'data sconosciuta';
-      document.getElementById('importModalSub').textContent =
-        `Il backup contiene ${n} componenti (esportato il ${ts}). I dati attuali verranno sostituiti. Continuare?`;
+      document.getElementById('importModalSub').textContent = `Il backup contiene ${n} componenti (esportato il ${ts}). I dati attuali verranno sostituiti. Continuare?`;
       openModal('importModal');
     } catch { showToast('File non valido ✗', 'error'); }
   };
   reader.readAsText(file);
 });
-
 document.getElementById('cancelImport').addEventListener('click', () => { pendingImportData = null; closeModal('importModal'); });
-
 document.getElementById('confirmImport').addEventListener('click', () => {
   if (!pendingImportData) return;
-  appData = pendingImportData;
-  saveData(appData);
-  renderList();
-  updateKmSummary();
-  pendingImportData = null;
-  closeModal('importModal');
+  appData = pendingImportData; saveData(appData); renderList(); updateKmSummary();
+  pendingImportData = null; closeModal('importModal');
   showToast(`Importati ${appData.parts.length} componenti ✓`, 'success');
 });
 
-// ============================================================
-// NAVIGATION
-// ============================================================
 document.getElementById('backBtn').addEventListener('click', () => { showView('viewList'); currentPartId = null; });
-
-function showView(id) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// ============================================================
-// MODALS
-// ============================================================
+function showView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); }); });
 
-document.querySelectorAll('.modal-overlay').forEach(o => {
-  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
-});
-
-// ============================================================
-// TOAST
-// ============================================================
 let toastTimer;
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type ? ' '+type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  t.textContent = msg; t.className = 'toast show' + (type ? ' '+type : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
 function todayISO() { return new Date().toISOString().split('T')[0]; }
+function formatDate(iso) { if (!iso) return ''; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
 
-function formatDate(iso) {
-  if (!iso) return '';
-  const [y,m,d] = iso.split('-');
-  return `${d}/${m}/${y}`;
-}
-
-// ============================================================
-// INIT
-// ============================================================
-// Carica secret Strava se salvato
 const savedSecret = localStorage.getItem('pedalo_strava_secret');
 if (savedSecret) window._STRAVA_SECRET = savedSecret;
-
-// Carica token Strava
 const savedToken = loadStravaToken();
-if (savedToken && savedToken.access_token) {
-  stravaToken = savedToken;
-  stravaAthlete = savedToken.athlete;
-  stravaTotalKm = appData.stravaTotalKm || null;
-}
-
-// Carica bici selezionata
+if (savedToken && savedToken.access_token) { stravaToken = savedToken; stravaAthlete = savedToken.athlete; stravaTotalKm = appData.stravaTotalKm || null; }
 if (appData.stravaBikeId) selectedBikeId = appData.stravaBikeId;
 
-// Gestisci callback OAuth se presente nell'URL
-handleStravaCallback().then(() => {
-  updateStravaUI();
-  updateKmSummary();
-  renderList();
-  updateExportMeta();
-});
+handleStravaCallback().then(() => { updateStravaUI(); updateKmSummary(); renderList(); updateExportMeta(); });
 </script>
-
 </body>
 </html>
