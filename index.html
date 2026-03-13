@@ -718,10 +718,54 @@ function clearStravaToken() {
   stravaToken = null; stravaAthlete = null; stravaTotalKm = null;
 }
 
-function stravaLogin() {
-  localStorage.setItem('pedalo_strava_pending', '1');
+function stravaLogin(afterSync = false) {
+  localStorage.setItem('pedalo_strava_pending', afterSync ? 'sync' : '1');
   const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(STRAVA_REDIRECT_URI)}&approval_prompt=auto&scope=${STRAVA_SCOPE}`;
   window.location.href = url;
+}
+
+async function stravaRefreshToken() {
+  // Prova il refresh con client_secret se disponibile
+  const secret = window._STRAVA_SECRET;
+  if (!secret || !stravaToken?.refresh_token) return false;
+  try {
+    const resp = await fetch('https://www.strava.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: STRAVA_CLIENT_ID,
+        client_secret: secret,
+        grant_type: 'refresh_token',
+        refresh_token: stravaToken.refresh_token
+      })
+    });
+    if (!resp.ok) return false;
+    const newToken = await resp.json();
+    if (!newToken.access_token) return false;
+    saveStravaToken(newToken);
+    stravaToken = newToken;
+    stravaAthlete = newToken.athlete || stravaAthlete;
+    updateStravaUI();
+    return true;
+  } catch { return false; }
+}
+
+function isTokenExpired() {
+  if (!stravaToken) return true;
+  if (!stravaToken.expires_at) return false;
+  return Math.floor(Date.now() / 1000) > stravaToken.expires_at - 300;
+}
+
+async function ensureValidToken() {
+  if (!stravaToken) return false;
+  if (!isTokenExpired()) return true;
+  // Prova refresh silenzioso
+  const refreshed = await stravaRefreshToken();
+  if (refreshed) return true;
+  // Refresh fallito → reindirizza a Strava e al ritorno riprende il sync
+  showToast('Sessione scaduta, riconnessione...', '');
+  setTimeout(() => stravaLogin(true), 1000);
+  return false;
 }
 
 async function stravaExchangeCode(code) {
@@ -742,8 +786,11 @@ async function handleStravaCallback() {
   const error = params.get('error');
   if (error) { showToast('Connessione Strava annullata', 'error'); window.history.replaceState({}, '', window.location.pathname); return; }
   if (!code) return;
+
+  const pending = localStorage.getItem('pedalo_strava_pending');
   window.history.replaceState({}, '', window.location.pathname);
   localStorage.removeItem('pedalo_strava_pending');
+
   showToast('Connessione a Strava in corso...', '');
   const tokenData = await stravaExchangeCode(code);
   if (tokenData && tokenData.access_token) {
@@ -751,8 +798,13 @@ async function handleStravaCallback() {
     stravaToken = tokenData;
     stravaAthlete = tokenData.athlete;
     updateStravaUI();
-    await syncStravaKm();
-    showToast(`Connesso come ${stravaAthlete?.firstname || 'atleta'} ✓`, 'success');
+    if (pending === 'sync') {
+      // Era un refresh automatico per aggiornare i km
+      await syncStravaKm();
+    } else {
+      await syncStravaKm();
+      showToast(`Connesso come ${stravaAthlete?.firstname || 'atleta'} ✓`, 'success');
+    }
   } else {
     showStravaSecretPrompt(code);
   }
@@ -874,6 +926,8 @@ function kmAtDateScaled(dateISO) {
 
 async function syncStravaKm() {
   if (!stravaToken) return;
+  const valid = await ensureValidToken();
+  if (!valid) return; // sta reindirizzando a Strava
   if (!selectedBikeId) { await showBikeSelectModal(() => syncStravaKm()); return; }
 
   const btn = document.getElementById('kmSyncBtn');
