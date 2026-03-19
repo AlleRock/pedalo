@@ -899,7 +899,7 @@ async function fetchAllBikeActivities() {
   }
   allActivities.sort((a, b) => a.ts - b.ts);
   let cum = 0;
-  return allActivities.map(a => { cum += a.meters / 1000; return { ts: a.ts, cumKm: Math.round(cum) }; });
+  return allActivities.map(a => { cum += a.meters; return { ts: a.ts, cumKm: cum / 1000 }; });
 }
 
 function kmAtDate(timeline, dateISO) {
@@ -913,15 +913,12 @@ function kmAtDate(timeline, dateISO) {
   return km;
 }
 
-// Km scalati a una data usando timeline + totale ufficiale
+// Km dalla timeline a una data — preciso, senza proporzioni
 function kmAtDateScaled(dateISO) {
   if (!dateISO) return null;
   const timeline = appData.stravaTimeline;
-  const totalKm = appData.stravaTotalKm;
-  if (!timeline || !totalKm) return null;
-  const timelineTotal = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
-  if (timelineTotal === 0) return 0;
-  return Math.round((kmAtDate(timeline, dateISO) / timelineTotal) * totalKm);
+  if (!timeline || !timeline.length) return null;
+  return kmAtDate(timeline, dateISO);
 }
 
 async function syncStravaKm() {
@@ -949,7 +946,7 @@ async function syncStravaKm() {
     const timeline = await fetchAllBikeActivities();
     if (!timeline) { btn.classList.remove('syncing'); icon.innerHTML = '↻'; return; }
 
-    const timelineTotal = timeline.length ? timeline[timeline.length - 1].cumKm : 0;
+    const timelineTotal = timeline.length ? Math.round(timeline[timeline.length - 1].cumKm) : 0;
     const totalKm = officialKm !== null ? officialKm : timelineTotal;
 
     stravaTotalKm = totalKm;
@@ -957,20 +954,17 @@ async function syncStravaKm() {
     appData.stravaTimeline = timeline;
     appData.stravaLastSync = new Date().toISOString();
 
-    // kmAtInstall NON viene ricalcolato durante il sync — è fisso al momento della sostituzione.
-    // Ricalcoliamo solo lo storico (kmAtSwap, kmDone) che sono dati passati immutabili.
+    // Ricalcola sempre kmAtInstall dalla timeline aggiornata — massima precisione.
     appData.parts.forEach(part => {
       if (part.installDate && part.kmAtInstall == null) {
-        const ratio = timelineTotal > 0 ? kmAtDate(timeline, part.installDate) / timelineTotal : 0;
-        part.kmAtInstall = Math.round(ratio * totalKm);
+        part.kmAtInstall = kmAtDate(timeline, part.installDate);
       }
       part.history.forEach((h, idx) => {
         if (h.date) {
-          const ratio = timelineTotal > 0 ? kmAtDate(timeline, h.date) / timelineTotal : 0;
-          h.kmAtSwap = Math.round(ratio * totalKm);
+          h.kmAtSwap = kmAtDate(timeline, h.date);
           const prevEntry = idx > 0 ? part.history[idx - 1] : null;
           const kmAtThisInstall = prevEntry
-            ? Math.round((kmAtDate(timeline, prevEntry.date) / (timelineTotal||1)) * totalKm)
+            ? kmAtDate(timeline, prevEntry.date)
             : (part.kmAtInstall || 0);
           h.kmDone = Math.max(0, h.kmAtSwap - kmAtThisInstall);
         }
@@ -994,9 +988,8 @@ async function syncStravaKm() {
 
 function kmSinceInstall(part) {
   if (!appData.stravaTotalKm || !part.installDate) return null;
-  const kmAtInstall = part.kmAtInstall != null ? part.kmAtInstall
-    : (appData.stravaTimeline ? kmAtDateScaled(part.installDate) : 0);
-  return Math.max(0, appData.stravaTotalKm - kmAtInstall);
+  const kmAtInstall = part.kmAtInstall != null ? part.kmAtInstall : 0;
+  return Math.max(0, Math.round(appData.stravaTotalKm - kmAtInstall));
 }
 
 function kmColor(km, threshold) {
@@ -1195,8 +1188,8 @@ document.getElementById('btnSave').addEventListener('click', () => {
   part.model = document.getElementById('fieldModel').value.trim();
   const newInstallDate = document.getElementById('fieldInstallDate').value;
   if (newInstallDate !== part.installDate) {
-    if (appData.stravaTimeline && newInstallDate) part.kmAtInstall = kmAtDateScaled(newInstallDate);
-    else if (appData.stravaTotalKm && newInstallDate) part.kmAtInstall = appData.stravaTotalKm;
+    if (appData.stravaTotalKm && newInstallDate) part.kmAtInstall = kmAtDateScaled(newInstallDate) ?? appData.stravaTotalKm;
+    else part.kmAtInstall = null;
   }
   part.installDate = newInstallDate;
   saveData(appData); updateDetailSubtitle(part); updateKmDetailCard(); renderList();
@@ -1220,7 +1213,8 @@ document.getElementById('confirmReplace').addEventListener('click', () => {
   const newBrand = document.getElementById('replaceNewBrand').value.trim();
   const newModel = document.getElementById('replaceNewModel').value.trim();
   const note = document.getElementById('replaceNote').value.trim();
-  const kmAtSwapDate = kmAtDateScaled(date);
+  const isToday = date === todayISO();
+  const kmAtSwapDate = isToday ? (appData.stravaTotalKm || null) : kmAtDateScaled(date);
   const kmDoneByPart = (kmAtSwapDate != null && part.kmAtInstall != null) ? Math.max(0, kmAtSwapDate - part.kmAtInstall) : null;
   part.history.push({ date, note, ts: Date.now(), prevBrand: part.brand, prevModel: part.model, prevInstall: part.installDate, newBrand, newModel, kmAtSwap: kmAtSwapDate, kmDone: kmDoneByPart });
   if (newBrand) part.brand = newBrand;
