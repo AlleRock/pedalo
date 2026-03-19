@@ -957,18 +957,17 @@ async function syncStravaKm() {
     appData.stravaTimeline = timeline;
     appData.stravaLastSync = new Date().toISOString();
 
-    // Ricalcola kmAtInstall per tutti i componenti
+    // kmAtInstall NON viene ricalcolato durante il sync — è fisso al momento della sostituzione.
+    // Ricalcoliamo solo lo storico (kmAtSwap, kmDone) che sono dati passati immutabili.
     appData.parts.forEach(part => {
-      if (part.installDate) {
+      if (part.installDate && part.kmAtInstall == null) {
         const ratio = timelineTotal > 0 ? kmAtDate(timeline, part.installDate) / timelineTotal : 0;
         part.kmAtInstall = Math.round(ratio * totalKm);
       }
-      // Ricalcola storico
       part.history.forEach((h, idx) => {
         if (h.date) {
           const ratio = timelineTotal > 0 ? kmAtDate(timeline, h.date) / timelineTotal : 0;
           h.kmAtSwap = Math.round(ratio * totalKm);
-          // km fatti da questo componente
           const prevEntry = idx > 0 ? part.history[idx - 1] : null;
           const kmAtThisInstall = prevEntry
             ? Math.round((kmAtDate(timeline, prevEntry.date) / (timelineTotal||1)) * totalKm)
