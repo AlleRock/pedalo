@@ -904,7 +904,7 @@ async function fetchAllBikeActivities() {
 
 function kmAtDate(timeline, dateISO) {
   if (!timeline || !timeline.length) return 0;
-  const ts = Math.floor(new Date(dateISO).getTime() / 1000);
+  const ts = Math.floor(new Date(dateISO + 'T00:00:00').getTime() / 1000);
   let km = 0;
   for (let i = 0; i < timeline.length; i++) {
     if (timeline[i].ts <= ts) km = timeline[i].cumKm;
@@ -965,8 +965,8 @@ async function syncStravaKm() {
           const prevEntry = idx > 0 ? part.history[idx - 1] : null;
           const kmAtThisInstall = prevEntry
             ? kmAtDate(timeline, prevEntry.date)
-            : (part.kmAtInstall || 0);
-          h.kmDone = Math.max(0, h.kmAtSwap - kmAtThisInstall);
+            : part.kmAtInstall;
+          h.kmDone = (h.kmAtSwap != null && kmAtThisInstall != null) ? Math.max(0, h.kmAtSwap - kmAtThisInstall) : null;
         }
       });
     });
@@ -988,7 +988,7 @@ async function syncStravaKm() {
 
 function kmSinceInstall(part) {
   if (!appData.stravaTotalKm || !part.installDate) return null;
-  const kmAtInstall = part.kmAtInstall != null ? part.kmAtInstall : 0;
+  const kmAtInstall = part.kmAtInstall != null ? part.kmAtInstall : appData.stravaTotalKm;
   return Math.max(0, Math.round(appData.stravaTotalKm - kmAtInstall));
 }
 
@@ -1173,7 +1173,7 @@ document.getElementById('confirmEditHistory').addEventListener('click', () => {
     const part2 = appData.parts.find(p => p.id === currentPartId);
     const idx = part2.history.findIndex(x => x.ts === editingHistoryTs);
     const prevEntry = idx > 0 ? part2.history[idx - 1] : null;
-    const kmAtInstallForThis = prevEntry ? kmAtDateScaled(prevEntry.date) : (part2.kmAtInstall || 0);
+    const kmAtInstallForThis = prevEntry ? kmAtDateScaled(prevEntry.date) : part2.kmAtInstall;
     h.kmDone = h.kmAtSwap != null && kmAtInstallForThis != null ? Math.max(0, h.kmAtSwap - kmAtInstallForThis) : null;
   }
   editingHistoryTs = null;
@@ -1346,7 +1346,7 @@ function showToast(msg, type = '') {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-function todayISO() { return new Date().toISOString().split('T')[0]; }
+function todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function formatDate(iso) { if (!iso) return ''; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
 
 const savedSecret = localStorage.getItem('pedalo_strava_secret');
