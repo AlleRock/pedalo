@@ -1,10 +1,8 @@
-const CACHE = 'pedalo-v2';
-
+const CACHE = 'pedalo-v3';
 // All'installazione non pre-cacchiamo nulla (app è un file singolo)
 self.addEventListener('install', () => {
   self.skipWaiting();
 });
-
 // Pulizia vecchie cache
 self.addEventListener('activate', e => {
   e.waitUntil(
@@ -14,7 +12,6 @@ self.addEventListener('activate', e => {
   );
   self.clients.claim();
 });
-
 // Cache-first con fallback network
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
