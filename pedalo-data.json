@@ -1,0 +1,435 @@
+{
+ "v": 1,
+ "parts": [
+  {
+   "id": "telaio",
+   "name": "Telaio",
+   "icon": "🦾",
+   "brand": "Canyon",
+   "model": "Endurace 7 RB (2022, Size S)",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "manubrio",
+   "name": "Manubrio",
+   "icon": "🚴",
+   "brand": "Canyon",
+   "model": "H17 Ergobar AL",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "c_1785655722591",
+   "name": "Nastro Manubrio",
+   "icon": "🚴",
+   "brand": "Lizard Skins",
+   "model": "DSP Ultra",
+   "installDate": "2026-07-17",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "cerchio_ant",
+   "name": "Cerchione anteriore",
+   "icon": "🛞",
+   "brand": "Fulcrum",
+   "model": "Racing 900",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "ruota_ant",
+   "name": "Ruota anteriore",
+   "icon": "🛞",
+   "brand": "Schwalbe",
+   "model": "One HS462A 25\"",
+   "installDate": "2026-10-05",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2024-07-09",
+     "note": "Usura",
+     "ts": 1773338791156,
+     "prevBrand": "Schwalbe",
+     "prevModel": "One 25\"",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Schwalbe",
+     "newModel": "One HS462A 25\""
+    },
+    {
+     "date": "2026-10-05",
+     "note": "",
+     "ts": 1791218893685,
+     "prevBrand": "Schwalbe",
+     "prevModel": "One HS462A 25\"",
+     "prevInstall": "2024-07-09",
+     "newBrand": "Schwalbe",
+     "newModel": "One HS462A 25\""
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "camera_ant",
+   "name": "Camera d'aria anteriore",
+   "icon": "🔩",
+   "brand": "Specialized",
+   "model": "Airlock 700x20/28 Presta 40mm",
+   "installDate": "2026-10-05",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2024-07-09",
+     "note": "Foratura",
+     "ts": 1773339237422,
+     "prevBrand": "Schwalbe",
+     "prevModel": "SV15 700x25C",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Schwalbe",
+     "newModel": "SV15 700x25C"
+    },
+    {
+     "date": "2026-10-05",
+     "note": "",
+     "ts": 1791218988657,
+     "prevBrand": "Schwalbe",
+     "prevModel": "SV15 700x25C",
+     "prevInstall": "2024-07-09",
+     "newBrand": "Specialized",
+     "newModel": "Airlock 700x20/28 Presta 40mm"
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "pastiglie_ant",
+   "name": "Pastiglie freni anteriori",
+   "icon": "🔩",
+   "brand": "Shimano",
+   "model": "R55C4",
+   "installDate": "2025-10-09",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2025-10-09",
+     "note": "Usura",
+     "ts": 1773339382485,
+     "prevBrand": "Shimano",
+     "prevModel": "105 R7000",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Shimano",
+     "newModel": "R55C4"
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "cerchio_post",
+   "name": "Cerchione posteriore",
+   "icon": "🛞",
+   "brand": "Fulcrum",
+   "model": "Racing 900 SH11",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "ruota_post",
+   "name": "Ruota posteriore",
+   "icon": "🛞",
+   "brand": "Schwalbe",
+   "model": "One 25\"",
+   "installDate": "2025-08-11",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2024-06-06",
+     "note": "Usura",
+     "ts": 1773339658512,
+     "prevBrand": "Schwalbe",
+     "prevModel": "One 25\"",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Schwalbe",
+     "newModel": "One 25\""
+    },
+    {
+     "date": "2025-08-11",
+     "note": "Usura",
+     "ts": 1773339691260,
+     "prevBrand": "Schwalbe",
+     "prevModel": "One 25\"",
+     "prevInstall": "2024-06-06",
+     "newBrand": "Schwalbe",
+     "newModel": "One 25\""
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "camera_post",
+   "name": "Camera d'aria posteriore",
+   "icon": "🔩",
+   "brand": "Schwalbe",
+   "model": "SV15 700x25C",
+   "installDate": "2026-05-23",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "0024-06-06",
+     "note": "Foratura",
+     "ts": 1773339898235,
+     "prevBrand": "Schwalbe",
+     "prevModel": "SV15 700x25C",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Schwalbe",
+     "newModel": "SV15 700x25C"
+    },
+    {
+     "date": "2024-12-14",
+     "note": "Foratura",
+     "ts": 1773339940852,
+     "prevBrand": "Schwalbe",
+     "prevModel": "SV15 700x25C",
+     "prevInstall": "0024-06-06",
+     "newBrand": "Schwalbe",
+     "newModel": "SV15 700x25C"
+    },
+    {
+     "date": "2025-08-11",
+     "note": "Foratura",
+     "ts": 1773339978463,
+     "prevBrand": "Schwalbe",
+     "prevModel": "SV15 700x25C",
+     "prevInstall": "2024-12-14",
+     "newBrand": "Schwalbe",
+     "newModel": "SV15 700x25C"
+    },
+    {
+     "date": "2026-05-23",
+     "note": "Foratura con punzone metallico",
+     "ts": 1785444461643,
+     "prevBrand": "Schwalbe",
+     "prevModel": "SV15 700x25C",
+     "prevInstall": "2025-08-11",
+     "newBrand": "Schwalbe",
+     "newModel": "SV15 700x25C"
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "pastiglie_post",
+   "name": "Pastiglie freni posteriori",
+   "icon": "🔩",
+   "brand": "Shimano",
+   "model": "R55C4",
+   "installDate": "2025-10-24",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2025-10-24",
+     "note": "Usura",
+     "ts": 1773340056317,
+     "prevBrand": "Shimano",
+     "prevModel": "105 R7000",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Shimano",
+     "newModel": "R55C4"
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "deragliatore_ant",
+   "name": "Deragliatore anteriore",
+   "icon": "⚙️",
+   "brand": "Shimano",
+   "model": "105 R7000",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "guarnitura",
+   "name": "Guarnitura",
+   "icon": "⚙️",
+   "brand": "Shimano",
+   "model": "105 R70 52/36",
+   "installDate": "2026-03-14",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2024-03-30",
+     "note": "Usura",
+     "ts": 1773343157079,
+     "prevBrand": "Shimano",
+     "prevModel": "105 R7000",
+     "prevInstall": "2022-03-04",
+     "newBrand": "Shimano",
+     "newModel": "105 R7000 52-36 170mm"
+    },
+    {
+     "date": "2026-03-14",
+     "note": "Usura quasi completa",
+     "ts": 1773604973682,
+     "prevBrand": "Shimano",
+     "prevModel": "105 R7000 52-36 170mm",
+     "prevInstall": "2024-03-30",
+     "newBrand": "Shimano",
+     "newModel": "105 R70 52/36"
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "deragliatore_post",
+   "name": "Deragliatore posteriore",
+   "icon": "⚙️",
+   "brand": "Shimano",
+   "model": "105 R7000 GS",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "pignoni",
+   "name": "Pacco pignoni",
+   "icon": "⚙️",
+   "brand": "Shimano",
+   "model": "CS-HG700-11",
+   "installDate": "2026-03-19",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2026-03-19",
+     "note": "Usura totale",
+     "ts": 1773953712536,
+     "prevBrand": "Shimano",
+     "prevModel": "HG7000 11-34 11S",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Shimano",
+     "newModel": "CS-HG700-11"
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "pedali",
+   "name": "Pedali",
+   "icon": "🔧",
+   "brand": "Look",
+   "model": "KEO Classic 3 Plus",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "sella",
+   "name": "Sella",
+   "icon": "💺",
+   "brand": "Selle Italia",
+   "model": "Model X",
+   "installDate": "2022-03-14",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "catena",
+   "name": "Catena",
+   "icon": "⛓️",
+   "brand": "Shimano",
+   "model": "CN-HG601-11",
+   "installDate": "2026-03-14",
+   "kmThreshold": 0,
+   "history": [
+    {
+     "date": "2026-03-14",
+     "note": "Totalmente allargata",
+     "ts": 1773605090354,
+     "prevBrand": "Shimano",
+     "prevModel": "CN-HG601 11s",
+     "prevInstall": "2022-03-14",
+     "newBrand": "Shimano",
+     "newModel": "CN-HG601-11"
+    }
+   ],
+   "u": 1791305346238
+  },
+  {
+   "id": "c_1785439335988",
+   "name": "Velocigno Batteria",
+   "icon": "⚡",
+   "brand": "Sigma",
+   "model": "R2 DUO",
+   "installDate": "2026-07-30",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "c_1785439380539",
+   "name": "Pompetta Batteria",
+   "icon": "⚡",
+   "brand": "Coospo",
+   "model": "H6",
+   "installDate": "2026-07-30",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  },
+  {
+   "id": "c_1785439387077",
+   "name": "Cadigno Batteria",
+   "icon": "⚡",
+   "brand": "Magene",
+   "model": "S3+",
+   "installDate": "",
+   "kmThreshold": 0,
+   "history": [],
+   "u": 1791305346238
+  }
+ ],
+ "order": [
+  "telaio",
+  "manubrio",
+  "c_1785655722591",
+  "cerchio_ant",
+  "ruota_ant",
+  "camera_ant",
+  "pastiglie_ant",
+  "cerchio_post",
+  "ruota_post",
+  "camera_post",
+  "pastiglie_post",
+  "deragliatore_ant",
+  "guarnitura",
+  "deragliatore_post",
+  "pignoni",
+  "pedali",
+  "sella",
+  "catena",
+  "c_1785439335988",
+  "c_1785439380539",
+  "c_1785439387077"
+ ],
+ "orderU": 1791305346238,
+ "deleted": {
+  "ciclocomputer": 1791305346238,
+  "fascia_cardio": 1791305346238,
+  "sensore_cadenza": 1791305346238,
+  "sensore_velocita": 1791305346238
+ }
+}
