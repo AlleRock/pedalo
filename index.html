@@ -252,7 +252,7 @@
 
   label { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
 
-  input[type="text"], input[type="date"], input[type="number"] {
+  input[type="text"], input[type="date"], input[type="number"], input[type="password"] {
     background: var(--surface2); border: 1px solid var(--border);
     border-radius: 8px; color: var(--text);
     font-family: 'DM Sans', sans-serif; font-size: 15px;
@@ -465,6 +465,21 @@
   </div>
 </div>
 
+<!-- MODAL: Sync cloud -->
+<div class="modal-overlay" id="syncModal">
+  <div class="modal">
+    <div class="modal-title" style="color: var(--strava)">Sync cloud</div>
+    <div class="modal-sub">Repo GitHub <b>privata</b> solo per i dati, e un token fine-grained limitato a quella repo (Contents: read &amp; write). Va inserito una volta per dispositivo.</div>
+    <div class="modal-form-group"><label>Repo dati</label><input type="text" id="syncRepo" placeholder="AlleRock/pedalo-data" autocapitalize="off" autocomplete="off" /></div>
+    <div class="modal-form-group"><label>Token</label><input type="password" id="syncToken" autocomplete="off" /></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="syncOff" style="color: var(--danger)">Scollega</button>
+      <button class="btn-cancel" id="cancelSync">Annulla</button>
+      <button class="btn-confirm" id="confirmSync" style="background: var(--strava); color: white">Salva e sincronizza</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Importa -->
 <div class="modal-overlay" id="importModal">
   <div class="modal">
@@ -569,6 +584,12 @@
           <div class="backup-desc">Ripristina da un backup JSON precedentemente salvato</div>
           <div class="backup-meta">Sostituisce i dati correnti</div>
         </div>
+      </div>
+      <div class="backup-card" id="btnSync" style="margin-top:12px">
+        <div class="backup-icon">☁️</div>
+        <div class="backup-title" style="color: var(--strava)">Sync cloud</div>
+        <div class="backup-desc">Allinea i dati tra i tuoi dispositivi, senza export/import</div>
+        <div class="backup-meta" id="syncStatus">Non attivo</div>
       </div>
       <input type="file" id="importFileInput" accept=".json" style="display:none">
     </div>
@@ -675,6 +696,196 @@ const DEFAULT_PARTS = [
   { id: 'manubrio',          name: 'Manubrio',                  icon: '🚴' },
 ];
 
+/* ===== SYNC CLOUD (GitHub Contents API, repo privata dei dati) ===== */
+const SYNC_KEY = 'pedalo_sync';
+const SYNC_PATH = 'pedalo-data.json';
+const SYNC_FIELDS = ['id','name','icon','brand','model','installDate','kmThreshold'];
+const HIST_FIELDS = ['date','note','ts','prevBrand','prevModel','prevInstall','newBrand','newModel'];
+let syncTimer = null, syncBusy = false, syncAgain = false, lastPull = 0;
+
+function syncCfg() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || null; } catch(e) { return null; } }
+function syncCfgSave(c) { localStorage.setItem(SYNC_KEY, JSON.stringify(c)); }
+function syncMeta(d) { d = d || appData; return d.syncMeta || (d.syncMeta = { sigs: {}, deleted: {}, orderSig: '', orderU: 0 }); }
+function pick(o, f) { const r = {}; f.forEach(k => { if (o[k] !== undefined) r[k] = o[k]; }); return r; }
+function partPayload(p) { const r = pick(p, SYNC_FIELDS); r.history = (p.history || []).map(h => pick(h, HIST_FIELDS)); r.u = p.u || 0; return r; }
+function partSig(p) { const r = partPayload(p); delete r.u; return JSON.stringify(r); }
+
+// Chiamata da saveData: rileva cosa è cambiato davvero (timestamp per componente, ordine, eliminazioni)
+function trackChanges(d) {
+  if (!d || !Array.isArray(d.parts)) return;
+  const m = syncMeta(d), now = Date.now(), ids = new Set();
+  d.parts.forEach(p => {
+    ids.add(p.id);
+    const s = partSig(p);
+    if (m.sigs[p.id] !== s) { m.sigs[p.id] = s; p.u = now; }
+  });
+  Object.keys(m.sigs).forEach(id => { if (!ids.has(id)) { delete m.sigs[id]; m.deleted[id] = now; } });
+  const o = d.parts.map(p => p.id).join(',');
+  if (m.orderSig !== o) { m.orderSig = o; m.orderU = now; }
+}
+function scheduleSync() {
+  if (!syncCfg()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => runSync(), 2500);
+}
+
+function ghHeaders(c) { return { 'Authorization': 'Bearer ' + c.token, 'Accept': 'application/vnd.github+json' }; }
+async function ghGet(c) {
+  const r = await fetch(`https://api.github.com/repos/${c.repo}/contents/${SYNC_PATH}?t=${Date.now()}`, { headers: ghHeaders(c), cache: 'no-store' });
+  if (r.status === 404) return null;
+  if (!r.ok) { const e = new Error('GET ' + r.status); e.status = r.status; throw e; }
+  const j = await r.json();
+  const bin = atob(j.content.replace(/\n/g, ''));
+  const text = new TextDecoder().decode(Uint8Array.from(bin, ch => ch.charCodeAt(0)));
+  return { sha: j.sha, data: JSON.parse(text) };
+}
+async function ghPut(c, payload, sha) {
+  const bytes = new TextEncoder().encode(JSON.stringify(payload, null, 1));
+  let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
+  const body = { message: 'pedalo sync ' + new Date().toISOString(), content: btoa(bin) };
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${c.repo}/contents/${SYNC_PATH}`, { method: 'PUT', headers: { ...ghHeaders(c), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (r.status === 409 || r.status === 422) return 'conflict';
+  if (!r.ok) { const e = new Error('PUT ' + r.status); e.status = r.status; throw e; }
+  return 'ok';
+}
+
+function buildPayload() {
+  const m = syncMeta();
+  return { v: 1, parts: appData.parts.map(partPayload), order: appData.parts.map(p => p.id), orderU: m.orderU, deleted: m.deleted };
+}
+
+// Merge per componente: vince l'ultima modifica (u). Le eliminazioni vincono se più recenti dell'ultima modifica.
+function mergeRemote(remote) {
+  const m = syncMeta(), changed = new Set();
+  const del = { ...(remote.deleted || {}) };
+  Object.keys(m.deleted).forEach(id => { del[id] = Math.max(del[id] || 0, m.deleted[id]); });
+  const byId = {};
+  appData.parts.forEach(p => { byId[p.id] = p; });
+  (remote.parts || []).forEach(rp => {
+    const cur = byId[rp.id];
+    if (!cur) { byId[rp.id] = { ...rp }; changed.add(rp.id); }
+    else if ((rp.u || 0) > (cur.u || 0)) { byId[rp.id] = { ...cur, ...rp }; changed.add(rp.id); }
+  });
+  Object.keys(byId).forEach(id => { if (del[id] && del[id] > (byId[id].u || 0)) { delete byId[id]; changed.add(id); } });
+  const pref = (remote.orderU || 0) > m.orderU ? (remote.order || []) : appData.parts.map(p => p.id);
+  const seq = [];
+  pref.forEach(id => { if (byId[id] && !seq.includes(id)) seq.push(id); });
+  Object.keys(byId).forEach(id => { if (!seq.includes(id)) seq.push(id); });
+  return { parts: seq.map(id => byId[id]), deleted: del, orderU: Math.max(remote.orderU || 0, m.orderU), changed };
+}
+// I km derivati (kmAtInstall, kmAtSwap, kmDone) non viaggiano nel cloud: si ricalcolano dalla timeline Strava locale
+function deriveKm(parts) {
+  const tl = appData.stravaTimeline;
+  if (!tl || !tl.length) return;
+  parts.forEach(part => {
+    if (part.installDate && part.kmAtInstall == null) part.kmAtInstall = kmAtDate(tl, part.installDate);
+    (part.history || []).forEach((h, idx) => {
+      if (!h.date) return;
+      h.kmAtSwap = kmAtDate(tl, h.date);
+      const prev = idx > 0 ? part.history[idx - 1] : null;
+      const start = prev ? kmAtDate(tl, prev.date) : part.kmAtInstall;
+      h.kmDone = (h.kmAtSwap != null && start != null) ? Math.max(0, h.kmAtSwap - start) : null;
+    });
+  });
+}
+function applyMerged(res) {
+  const m = syncMeta();
+  res.parts.forEach(p => { if (res.changed.has(p.id)) { p.kmAtInstall = null; (p.history || []).forEach(h => { delete h.kmAtSwap; delete h.kmDone; }); } });
+  appData.parts = res.parts;
+  m.deleted = res.deleted;
+  m.sigs = {};
+  appData.parts.forEach(p => { m.sigs[p.id] = partSig(p); });
+  m.orderSig = appData.parts.map(p => p.id).join(',');
+  m.orderU = res.orderU;
+  deriveKm(appData.parts);
+  saveData(appData, { noSync: true });
+  if (currentPartId && (res.changed.has(currentPartId))) { showView('viewList'); currentPartId = null; showToast('Aggiornato da un altro dispositivo'); }
+  renderList(); updateKmSummary();
+}
+
+function setSyncState(state, msg) {
+  const el = document.getElementById('syncStatus'); if (!el) return;
+  const c = syncCfg();
+  if (!c) { el.textContent = 'Non attivo'; return; }
+  const t = c.lastSync ? new Date(c.lastSync).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) : null;
+  el.textContent = state === 'busy' ? 'Sincronizzo…' : state === 'offline' ? 'Offline · le modifiche partiranno al ritorno online'
+    : state === 'error' ? 'Errore: ' + msg : (t ? 'Sincronizzato alle ' + t : 'Attivo');
+}
+function syncErrMsg(e) {
+  if (e.status === 401) return 'token non valido o scaduto';
+  if (e.status === 403) return 'token senza permessi (serve Contents: read/write)';
+  if (e.status === 404) return 'repo non trovata o token non abilitato su di essa';
+  return e.message || 'sconosciuto';
+}
+
+async function runSync() {
+  const c = syncCfg(); if (!c) return;
+  if (syncBusy) { syncAgain = true; return; }
+  if (!navigator.onLine) { setSyncState('offline'); return; }
+  syncBusy = true; setSyncState('busy');
+  try {
+    let done = false;
+    for (let attempt = 0; attempt < 3 && !done; attempt++) {
+      const remote = await ghGet(c);
+      let force = false;
+      if (remote) {
+        if (!c.linked) {
+          const pristine = appData.parts.every(p => !p.brand && !p.model && !p.installDate && !(p.history || []).length);
+          if (pristine || confirm('Sul cloud ci sono già dati di Pèdalo.\n\nOK = usa i dati del cloud (sostituisce quelli di questo dispositivo)\nAnnulla = carica i dati di questo dispositivo sul cloud (sostituisce quelli del cloud)')) {
+            appData.parts = []; const m = syncMeta(); m.deleted = {}; m.orderU = 0; // ripartenza pulita: si adotta il cloud
+          } else force = true;
+        }
+        if (!force) applyMerged(mergeRemote(remote.data));
+      }
+      const payload = buildPayload();
+      if (remote && !force && JSON.stringify(payload) === JSON.stringify(remote.data)) done = true;
+      else done = (await ghPut(c, payload, remote ? remote.sha : null)) === 'ok';
+      if (done && !c.linked) { c.linked = true; }
+    }
+    if (!done) throw new Error('conflitto, riprova');
+    c.lastSync = new Date().toISOString(); syncCfgSave(c); lastPull = Date.now();
+    setSyncState('ok');
+  } catch (e) { setSyncState('error', syncErrMsg(e)); }
+  syncBusy = false;
+  if (syncAgain) { syncAgain = false; scheduleSync(); }
+}
+
+function importReplace(nd) {
+  const old = appData, now = Date.now(), m = syncMeta(nd);
+  m.deleted = { ...(old.syncMeta ? old.syncMeta.deleted : {}) };
+  m.sigs = {}; m.orderSig = '';
+  (old.parts || []).forEach(p => { if (!nd.parts.some(x => x.id === p.id)) m.deleted[p.id] = now; });
+  appData = nd;
+}
+function openSyncModal() {
+  const c = syncCfg();
+  document.getElementById('syncRepo').value = c ? c.repo : '';
+  document.getElementById('syncToken').value = '';
+  document.getElementById('syncToken').placeholder = c ? '•••• già salvato (lascia vuoto per tenerlo)' : 'github_pat_...';
+  document.getElementById('syncOff').style.display = c ? '' : 'none';
+  openModal('syncModal');
+}
+function initSync() {
+  setSyncState('ok');
+  document.getElementById('btnSync').addEventListener('click', openSyncModal);
+  document.getElementById('cancelSync').addEventListener('click', () => closeModal('syncModal'));
+  document.getElementById('syncOff').addEventListener('click', () => { localStorage.removeItem(SYNC_KEY); setSyncState('ok'); closeModal('syncModal'); showToast('Sync disattivato'); });
+  document.getElementById('confirmSync').addEventListener('click', () => {
+    const repo = document.getElementById('syncRepo').value.trim().replace(/^https:\/\/github\.com\//, '').replace(/\.git$/, '');
+    const tok = document.getElementById('syncToken').value.trim();
+    const old = syncCfg();
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { showToast('Repo non valida (es. AlleRock/pedalo-data)', 'error'); return; }
+    if (!tok && !old) { showToast('Inserisci il token', 'error'); return; }
+    syncCfgSave({ repo, token: tok || old.token, linked: !!(old && old.linked && old.repo === repo), lastSync: old ? old.lastSync : null });
+    closeModal('syncModal'); runSync();
+  });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && syncCfg() && Date.now() - lastPull > 30000) runSync(); });
+  window.addEventListener('online', () => { if (syncCfg()) runSync(); });
+  if (syncCfg()) runSync();
+}
+/* ===== FINE SYNC CLOUD ===== */
+
 function loadData() {
   try {
     const raw = localStorage.getItem('pedalo_data');
@@ -686,10 +897,12 @@ function initData() {
   const data = { parts: DEFAULT_PARTS.map(p => ({ ...p, brand: '', model: '', installDate: '', kmThreshold: 0, history: [] })) };
   saveData(data); return data;
 }
-function saveData(data) {
+function saveData(data, opts) {
   data.updatedAt = new Date().toISOString();
+  trackChanges(data);
   try { localStorage.setItem('pedalo_data', JSON.stringify(data)); } catch(e) {}
-  updateExportMeta();
+  try { updateExportMeta(); } catch(e) {}
+  if (!(opts && opts.noSync)) scheduleSync();
 }
 let appData = loadData();
 
@@ -1328,7 +1541,7 @@ document.getElementById('importFileInput').addEventListener('change', e => {
 document.getElementById('cancelImport').addEventListener('click', () => { pendingImportData = null; closeModal('importModal'); });
 document.getElementById('confirmImport').addEventListener('click', () => {
   if (!pendingImportData) return;
-  appData = pendingImportData; saveData(appData); renderList(); updateKmSummary();
+  importReplace(pendingImportData); saveData(appData); renderList(); updateKmSummary();
   pendingImportData = null; closeModal('importModal');
   showToast(`Importati ${appData.parts.length} componenti ✓`, 'success');
 });
@@ -1355,7 +1568,7 @@ const savedToken = loadStravaToken();
 if (savedToken && savedToken.access_token) { stravaToken = savedToken; stravaAthlete = savedToken.athlete; stravaTotalKm = appData.stravaTotalKm || null; }
 if (appData.stravaBikeId) selectedBikeId = appData.stravaBikeId;
 
-handleStravaCallback().then(() => { updateStravaUI(); updateKmSummary(); renderList(); updateExportMeta(); });
+handleStravaCallback().then(() => { updateStravaUI(); updateKmSummary(); renderList(); updateExportMeta(); initSync(); });
 </script>
 </body>
 </html>
