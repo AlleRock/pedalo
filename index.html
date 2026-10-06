@@ -469,8 +469,8 @@
 <div class="modal-overlay" id="syncModal">
   <div class="modal">
     <div class="modal-title" style="color: var(--strava)">Sync cloud</div>
-    <div class="modal-sub">Repo GitHub <b>privata</b> solo per i dati, e un token fine-grained limitato a quella repo (Contents: read &amp; write). Va inserito una volta per dispositivo.</div>
-    <div class="modal-form-group"><label>Repo dati</label><input type="text" id="syncRepo" placeholder="AlleRock/pedalo-data" autocapitalize="off" autocomplete="off" /></div>
+    <div class="modal-sub">Repo GitHub con i dati nel branch <b>data</b>. Serve un token fine-grained solo su questa repo (Contents: read &amp; write), da inserire una volta per dispositivo.</div>
+    <div class="modal-form-group"><label>Repo dati</label><input type="text" id="syncRepo" placeholder="AlleRock/pedalo" autocapitalize="off" autocomplete="off" /></div>
     <div class="modal-form-group"><label>Token</label><input type="password" id="syncToken" autocomplete="off" /></div>
     <div class="modal-actions">
       <button class="btn-cancel" id="syncOff" style="color: var(--danger)">Scollega</button>
@@ -699,6 +699,8 @@ const DEFAULT_PARTS = [
 /* ===== SYNC CLOUD (GitHub Contents API, repo privata dei dati) ===== */
 const SYNC_KEY = 'pedalo_sync';
 const SYNC_PATH = 'pedalo-data.json';
+const SYNC_BRANCH = 'data';          // branch dedicato: i salvataggi non fanno ripartire il deploy di Pages
+const SYNC_DEFAULT_REPO = 'AlleRock/pedalo';
 const SYNC_FIELDS = ['id','name','icon','brand','model','installDate','kmThreshold'];
 const HIST_FIELDS = ['date','note','ts','prevBrand','prevModel','prevInstall','newBrand','newModel'];
 let syncTimer = null, syncBusy = false, syncAgain = false, lastPull = 0;
@@ -731,7 +733,7 @@ function scheduleSync() {
 
 function ghHeaders(c) { return { 'Authorization': 'Bearer ' + c.token, 'Accept': 'application/vnd.github+json' }; }
 async function ghGet(c) {
-  const r = await fetch(`https://api.github.com/repos/${c.repo}/contents/${SYNC_PATH}?t=${Date.now()}`, { headers: ghHeaders(c), cache: 'no-store' });
+  const r = await fetch(`https://api.github.com/repos/${c.repo}/contents/${SYNC_PATH}?ref=${SYNC_BRANCH}&t=${Date.now()}`, { headers: ghHeaders(c), cache: 'no-store' });
   if (r.status === 404) return null;
   if (!r.ok) { const e = new Error('GET ' + r.status); e.status = r.status; throw e; }
   const j = await r.json();
@@ -742,7 +744,7 @@ async function ghGet(c) {
 async function ghPut(c, payload, sha) {
   const bytes = new TextEncoder().encode(JSON.stringify(payload, null, 1));
   let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
-  const body = { message: 'pedalo sync ' + new Date().toISOString(), content: btoa(bin) };
+  const body = { message: 'pedalo sync ' + new Date().toISOString(), content: btoa(bin), branch: SYNC_BRANCH };
   if (sha) body.sha = sha;
   const r = await fetch(`https://api.github.com/repos/${c.repo}/contents/${SYNC_PATH}`, { method: 'PUT', headers: { ...ghHeaders(c), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   if (r.status === 409 || r.status === 422) return 'conflict';
@@ -860,7 +862,7 @@ function importReplace(nd) {
 }
 function openSyncModal() {
   const c = syncCfg();
-  document.getElementById('syncRepo').value = c ? c.repo : '';
+  document.getElementById('syncRepo').value = c ? c.repo : SYNC_DEFAULT_REPO;
   document.getElementById('syncToken').value = '';
   document.getElementById('syncToken').placeholder = c ? '•••• già salvato (lascia vuoto per tenerlo)' : 'github_pat_...';
   document.getElementById('syncOff').style.display = c ? '' : 'none';
