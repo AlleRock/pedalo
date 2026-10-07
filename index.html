@@ -729,7 +729,7 @@ const SYNC_BRANCH = 'data';          // branch dedicato: i salvataggi non fanno 
 const SYNC_DEFAULT_REPO = 'AlleRock/pedalo';
 const SYNC_FIELDS = ['id','name','icon','brand','model','installDate','kmThreshold'];
 const HIST_FIELDS = ['date','note','ts','prevBrand','prevModel','prevInstall','newBrand','newModel'];
-let syncTimer = null, syncBusy = false, syncAgain = false, lastPull = 0;
+let syncTimer = null, syncBusy = false, syncAgain = false, lastPull = 0, syncFails = 0;
 
 function syncCfg() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || null; } catch(e) { return null; } }
 function syncCfgSave(c) { localStorage.setItem(SYNC_KEY, JSON.stringify(c)); }
@@ -772,10 +772,13 @@ async function ghPut(c, payload, sha) {
   let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
   const body = { message: 'pedalo sync ' + new Date().toISOString(), content: btoa(bin), branch: SYNC_BRANCH };
   if (sha) body.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${c.repo}/contents/${SYNC_PATH}`, { method: 'PUT', headers: { ...ghHeaders(c), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  if (r.status === 409 || r.status === 422) return 'conflict';
-  if (!r.ok) { const e = new Error('PUT ' + r.status); e.status = r.status; throw e; }
-  return 'ok';
+  for (let i = 0; i < 3; i++) {
+    const r = await fetch(`https://api.github.com/repos/${c.repo}/contents/${SYNC_PATH}`, { method: 'PUT', headers: { ...ghHeaders(c), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (r.status === 409 || r.status === 422) return 'conflict';
+    if (r.status >= 500 && i < 2) { await new Promise(res => setTimeout(res, 1500 * (i + 1))); continue; } // GitHub a volte inciampa: riprova
+    if (!r.ok) { const e = new Error('PUT ' + r.status); e.status = r.status; throw e; }
+    return 'ok';
+  }
 }
 
 function buildPayload() {
@@ -831,6 +834,7 @@ function syncErrMsg(e) {
   if (e.status === 401) return 'token non valido o scaduto';
   if (e.status === 403) return 'token senza permessi (serve Contents: read/write)';
   if (e.status === 404) return 'repo non trovata o token non abilitato su di essa';
+  if (e.status >= 500) return 'GitHub non risponde (' + e.status + '), riprovo da solo · i dati restano al sicuro sul dispositivo';
   return e.message || 'sconosciuto';
 }
 
@@ -860,8 +864,12 @@ async function runSync() {
     }
     if (!done) throw new Error('conflitto, riprova');
     c.lastSync = new Date().toISOString(); syncCfgSave(c); lastPull = Date.now();
-    setSyncState('ok');
-  } catch (e) { setSyncState('error', syncErrMsg(e)); }
+    syncFails = 0; setSyncState('ok');
+  } catch (e) {
+    setSyncState('error', syncErrMsg(e));
+    // errori di GitHub o di rete: riprova ogni minuto (max 5 volte); per gli altri serve un intervento tuo
+    if ((e.status >= 500 || e instanceof TypeError) && ++syncFails <= 5) setTimeout(() => runSync(), 60000);
+  }
   syncBusy = false;
   if (syncAgain) { syncAgain = false; scheduleSync(); }
 }
