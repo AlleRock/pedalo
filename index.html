@@ -696,7 +696,33 @@ const DEFAULT_PARTS = [
   { id: 'manubrio',          name: 'Manubrio',                  icon: '🚴' },
 ];
 
-/* ===== SYNC CLOUD (GitHub Contents API, repo privata dei dati) ===== */
+/* ===== KM PER COMPONENTE: calcolo unico e deterministico dalla timeline Strava ===== */
+function localISO(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function kmAtTs(tl, ts) { let km = 0; for (let i = 0; i < tl.length; i++) { if (tl[i].ts <= ts) km = tl[i].cumKm; else break; } return km; }
+// Km di bici nel momento di una sostituzione: se registrata lo stesso giorno usa l'ora esatta (così i giri
+// fatti PRIMA del cambio quel giorno non finiscono sul componente nuovo); altrimenti l'inizio di quel giorno.
+function kmAtSwapMoment(tl, h) {
+  if (!h || !h.date) return null;
+  if (h.ts && localISO(new Date(h.ts)) === h.date) return kmAtTs(tl, Math.floor(h.ts / 1000));
+  return kmAtDate(tl, h.date);
+}
+function recomputePartKm(part, tl) {
+  if (!tl || !tl.length) return;
+  const hist = part.history || [];
+  const last = hist.length ? hist[hist.length - 1] : null;
+  if (last && last.date && last.date === part.installDate) part.kmAtInstall = kmAtSwapMoment(tl, last);
+  else if (part.installDate) part.kmAtInstall = kmAtDate(tl, part.installDate);
+  else part.kmAtInstall = null;
+  hist.forEach((h, i) => {
+    if (!h.date) return;
+    h.kmAtSwap = kmAtSwapMoment(tl, h);
+    const start = i > 0 ? kmAtSwapMoment(tl, hist[i - 1]) : (h.prevInstall ? kmAtDate(tl, h.prevInstall) : null);
+    h.kmDone = (h.kmAtSwap != null && start != null) ? Math.max(0, h.kmAtSwap - start) : null;
+  });
+}
+/* ===== FINE KM ===== */
+
+/* ===== SYNC CLOUD (GitHub Contents API) ===== */
 const SYNC_KEY = 'pedalo_sync';
 const SYNC_PATH = 'pedalo-data.json';
 const SYNC_BRANCH = 'data';          // branch dedicato: i salvataggi non fanno ripartire il deploy di Pages
@@ -777,20 +803,7 @@ function mergeRemote(remote) {
   return { parts: seq.map(id => byId[id]), deleted: del, orderU: Math.max(remote.orderU || 0, m.orderU), changed };
 }
 // I km derivati (kmAtInstall, kmAtSwap, kmDone) non viaggiano nel cloud: si ricalcolano dalla timeline Strava locale
-function deriveKm(parts) {
-  const tl = appData.stravaTimeline;
-  if (!tl || !tl.length) return;
-  parts.forEach(part => {
-    if (part.installDate && part.kmAtInstall == null) part.kmAtInstall = kmAtDate(tl, part.installDate);
-    (part.history || []).forEach((h, idx) => {
-      if (!h.date) return;
-      h.kmAtSwap = kmAtDate(tl, h.date);
-      const prev = idx > 0 ? part.history[idx - 1] : null;
-      const start = prev ? kmAtDate(tl, prev.date) : part.kmAtInstall;
-      h.kmDone = (h.kmAtSwap != null && start != null) ? Math.max(0, h.kmAtSwap - start) : null;
-    });
-  });
-}
+function deriveKm(parts) { parts.forEach(p => recomputePartKm(p, appData.stravaTimeline)); }
 function applyMerged(res) {
   const m = syncMeta();
   res.parts.forEach(p => { if (res.changed.has(p.id)) { p.kmAtInstall = null; (p.history || []).forEach(h => { delete h.kmAtSwap; delete h.kmDone; }); } });
@@ -1169,22 +1182,8 @@ async function syncStravaKm() {
     appData.stravaTimeline = timeline;
     appData.stravaLastSync = new Date().toISOString();
 
-    // Ricalcola sempre kmAtInstall dalla timeline aggiornata — massima precisione.
-    appData.parts.forEach(part => {
-      if (part.installDate && part.kmAtInstall == null) {
-        part.kmAtInstall = kmAtDate(timeline, part.installDate);
-      }
-      part.history.forEach((h, idx) => {
-        if (h.date) {
-          h.kmAtSwap = kmAtDate(timeline, h.date);
-          const prevEntry = idx > 0 ? part.history[idx - 1] : null;
-          const kmAtThisInstall = prevEntry
-            ? kmAtDate(timeline, prevEntry.date)
-            : part.kmAtInstall;
-          h.kmDone = (h.kmAtSwap != null && kmAtThisInstall != null) ? Math.max(0, h.kmAtSwap - kmAtThisInstall) : null;
-        }
-      });
-    });
+    // Ricalcola sempre kmAtInstall e i km delle sostituzioni dalla timeline aggiornata.
+    appData.parts.forEach(part => recomputePartKm(part, timeline));
 
     saveData(appData);
     updateKmSummary();
@@ -1441,6 +1440,7 @@ document.getElementById('confirmReplace').addEventListener('click', () => {
   document.getElementById('fieldInstallDate').value = part.installDate;
   saveData(appData); renderHistory(part.history); updateDetailSubtitle(part); updateKmDetailCard(); renderList();
   closeModal('replaceModal'); showToast('Sostituzione registrata ✓', 'success');
+  if (stravaToken && navigator.onLine) syncStravaKm();
 });
 
 document.getElementById('btnAddPart').addEventListener('click', () => {
